@@ -11,9 +11,12 @@
     # include <stdlib.h>
     # include <string.h>
 
+    # define FWS_RUTA_LOCAL "C:/Users/frodo/Desktop/"
+
     /********************************************************/
     /*********    declarar el tipo WFSprodct     ************/
     /********************************************************/
+
     typedef struct{
 
         int         PrdctId;
@@ -27,7 +30,8 @@
     /********************************************************/
     /*********     prototipo y declaracion       ************/
     /********************************************************/
-FILE        *   FwsProdctLdFile ( char * ruta, int modo ){
+
+FILE        *   FwsProdctCrtFle ( char * ruta, int modo ){
     // abrir el archivo segun la modalidad
     FILE * archivoRgst;
     switch ( modo ){
@@ -35,8 +39,9 @@ FILE        *   FwsProdctLdFile ( char * ruta, int modo ){
         case 1:
             // lectura binaria
             archivoRgst = fopen( ruta, "rb");
-            if ( archivoRgst )
+            if ( archivoRgst ){
                 return archivoRgst;
+            }
             else
                 return NULL;
         break;
@@ -44,8 +49,19 @@ FILE        *   FwsProdctLdFile ( char * ruta, int modo ){
         case 2:
             // escritura binaria
             archivoRgst = fopen( ruta, "wb");
-            if ( archivoRgst )
+            if ( archivoRgst ){
                 return archivoRgst;
+            }
+            else
+                return NULL;
+        break;
+
+        case 3:
+            // escritura binaria
+            archivoRgst = fopen( ruta, "wb+");
+            if ( archivoRgst ){
+                return archivoRgst;
+            }
             else
                 return NULL;
         break;
@@ -65,6 +81,7 @@ FwsProdct   *   FwsProdctCrear  ( int id, char * nombre, float precio, int stock
     return nuevoPrdct;
 }
 
+
 void            FwsProdctRgst   ( FILE * archivoRegst, FwsProdct * nuevoPrdct ){
     // registrar el producto creado en el archivo de registro
     fwrite( nuevoPrdct, sizeof(FwsProdct), 1, archivoRegst);
@@ -77,5 +94,13 @@ int             FwsProdctRdHdr  ( FILE * archivoRegst ){
     fread( &dims,sizeof(int),1,archivoRegst);
     return dims;
 }
+
+void            FwsProdctPntHdr ( FILE * archivoRegst, int  dims){
+
+    // imprimir el encavezado en el archivo binario
+    fwrite( &dims,sizeof(int),1,archivoRegst );
+
+}
+
 
 #endif // FWSBINSTATICFILE_H
