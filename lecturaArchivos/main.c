@@ -12,11 +12,17 @@ int main (){
     FILE * archRegWr = FwsProdctCrtFle( rutaCompleta, 2);
 
     // escribir cabecera en el archivo
-    FwsProdctPntHdr(archRegWr,13);
+    FwsProdctPnHdr(archRegWr,4);
 
     // escribir datos de los productos
-    FwsProdct * p1 = FwsProdctCrear(4,"taco",12.40,10,0);
-    FwsProdctPntPrd( archRegWr, p1);
+    FwsProdct * p1 = FwsProdctCrear(4,"taco",12.4,10,0);
+    FwsProdct * p2 = FwsProdctCrear(3,"buro",10.9,14,1);
+    FwsProdct * p3 = FwsProdctCrear(1,"kezo",40.2,62,0);
+    FwsProdct * p4 = FwsProdctCrear(5,"zope",45.2,94,1);
+    FwsProdctPnPrd( archRegWr, p1);
+    FwsProdctPnPrd( archRegWr, p2);
+    FwsProdctPnPrd( archRegWr, p3);
+    FwsProdctPnPrd( archRegWr, p4);
 
 
     // cerrar archivo para escritura binaria
@@ -26,10 +32,8 @@ int main (){
     /***** abrir archivo para lectura e impreciones en pantalla *****/
     FILE * arcRegRd = FwsProdctCrtFle(rutaCompleta,1);
 
-    // imprimir la cabecera en patalla
-    printf("el archivo mide -> %d \n", FwsProdctRdHdr(arcRegRd) );
-    FwsProdctRdPrd(arcRegRd);
-
+    // navegar hasta un registro
+    FwsProdctRdDspz(arcRegRd,4,4);
 
 
 

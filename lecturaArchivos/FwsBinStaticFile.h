@@ -87,11 +87,15 @@ FwsProdct   *   FwsProdctVdCr   ( ){
     return pVacio;
 }
 
+void            FwsProdctRd1Prd ( FwsProdct * al ){
+    // imprimir un producto indicado
+    printf(" -> %d \t %s \t %f \t %d \t %d <- \n",al->PrdctId, al->PrdctNombre, al->PrdctPrecio, al->PrdctStock, al->PrdctBandera);
+}
+
 void            FwsProdctRgst   ( FILE * archivoRegst, FwsProdct * nuevoPrdct ){
     // registrar el producto creado en el archivo de registro
     fwrite( nuevoPrdct, sizeof(FwsProdct), 1, archivoRegst);
 }
-
 
 int             FwsProdctRdHdr  ( FILE * archivoRegst ){
     // leer la canditadad de registros que contendra el archivo
@@ -100,23 +104,41 @@ int             FwsProdctRdHdr  ( FILE * archivoRegst ){
     return dims;
 }
 
-void            FwsProdctPntHdr ( FILE * archivoRegst, int  dims){
+void            FwsProdctPnHdr  ( FILE * archivoRegst, int  dims){
 
     // imprimir el encavezado en el archivo binario
     fwrite( &dims,sizeof(int),1,archivoRegst );
 
 }
 
-void            FwsProdctPntPrd ( FILE * archivoRegst, FwsProdct * pdctEntrada){
+void            FwsProdctPnPrd  ( FILE * archivoRegst, FwsProdct * pdctEntrada){
     // imprimir en el archivo los productos que se han ordenado
     fwrite( pdctEntrada, sizeof(FwsProdct), 1 , archivoRegst);
 }
 
-void            FwsProdctRdPrd  ( FILE * archivoRgst ){
+void            FwsProdctRdPrdS ( FILE * archivoRgst ){
     // imprimir en pantalla los registros del archivo
     FwsProdct * al = FwsProdctVdCr();
     fread( al, sizeof(FwsProdct), 1 , archivoRgst);
-    printf(" -> %d \t %s \t %f \t %d \t %d <-",al->PrdctId, al->PrdctNombre, al->PrdctPrecio, al->PrdctStock, al->PrdctBandera);
+    while(!feof(archivoRgst)){
+        FwsProdctRd1Prd(al);
+        fread( al, sizeof(FwsProdct), 1 , archivoRgst);
+    }
+}
+
+void            FwsProdctRdDspz ( FILE * archivoRgst, int indx,int hdr){
+    // mover el puntero hasta el registro[indx]
+    /* se usa la formula */
+    fseek(archivoRgst, hdr+(indx-1)*sizeof(FwsProdct) ,SEEK_SET);
+
+    // leer caracteres en esa posicion
+    FwsProdct * lectura = FwsProdctVdCr();
+    fread( lectura, sizeof(FwsProdct), 1 , archivoRgst);
+    FwsProdctRd1Prd(lectura);
 }
 
 #endif // FWSBINSTATICFILE_H
+
+
+
+
