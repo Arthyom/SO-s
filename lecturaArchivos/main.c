@@ -6,7 +6,7 @@
 int main (){
 
     // concatenacion de ruta y nombre de archivo
-    char * rutaCompleta = FwsVGenDir("bin2.bin",FWS_RUTA_LOCAL);
+    char * rutaCompleta = FwsProdctGenDir("bin2.bin",FWS_RUTA_LOCAL);
 
     /*** crear y abrir el archivo para escritura e imprecines ***/
     FILE * archRegWr = FwsProdctCrtFle( rutaCompleta, 2);
