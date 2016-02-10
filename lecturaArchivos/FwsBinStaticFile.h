@@ -31,6 +31,18 @@
     /*********     prototipo y declaracion       ************/
     /********************************************************/
 
+//*************> FUNCIONES MISELANEAS
+
+char        *   FwsProdctGenDir ( char * nombre, char * ruta ){
+
+    int    dims         = strlen(nombre) + strlen(ruta);
+    char * rutaCompleta = (char*) malloc( sizeof(char) * dims);
+    strcpy(rutaCompleta,ruta);
+    strcat(rutaCompleta,nombre);
+
+    return rutaCompleta;
+}
+
 FILE        *   FwsProdctCrtFle ( char * ruta, int modo ){
     // abrir el archivo segun la modalidad
     FILE * archivoRgst;
@@ -97,11 +109,12 @@ void            FwsProdctRgst   ( FILE * archivoRegst, FwsProdct * nuevoPrdct ){
     fwrite( nuevoPrdct, sizeof(FwsProdct), 1, archivoRegst);
 }
 
-int             FwsProdctRdHdr  ( FILE * archivoRegst ){
+void            FwsProdctRdHdr  ( FILE * archivoRegst ){
     // leer la canditadad de registros que contendra el archivo
     int dims ;
     fread( &dims,sizeof(int),1,archivoRegst);
-    return dims;
+    printf("%d \n",dims);
+
 }
 
 void            FwsProdctPnHdr  ( FILE * archivoRegst, int  dims){
@@ -116,8 +129,9 @@ void            FwsProdctPnPrd  ( FILE * archivoRegst, FwsProdct * pdctEntrada){
     fwrite( pdctEntrada, sizeof(FwsProdct), 1 , archivoRegst);
 }
 
-void            FwsProdctRdPrdS ( FILE * archivoRgst ){
+void            FwsProdctRdPrdS ( FILE * archivoRgst,int hdr ){
     // imprimir en pantalla los registros del archivo
+    fseek(archivoRgst, hdr+(1-1)*sizeof(FwsProdct) ,SEEK_SET);
     FwsProdct * al = FwsProdctVdCr();
     fread( al, sizeof(FwsProdct), 1 , archivoRgst);
     while(!feof(archivoRgst)){

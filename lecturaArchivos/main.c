@@ -1,12 +1,12 @@
 # include "FwsBinStaticFile.h"
-# include "C:/Users/frodo/Documents/FwsVision/FwsVision.h"
+# include "C:/Users/frodo/Documents/GitHub/FwsVision/FwsVision.h"
 
 
 
 int main (){
 
     // concatenacion de ruta y nombre de archivo
-    char * rutaCompleta = FwsVGenDir("bin2.dat",FWS_RUTA_LOCAL);
+    char * rutaCompleta = FwsVGenDir("bin2.bin",FWS_RUTA_LOCAL);
 
     /*** crear y abrir el archivo para escritura e imprecines ***/
     FILE * archRegWr = FwsProdctCrtFle( rutaCompleta, 2);
@@ -31,6 +31,8 @@ int main (){
 
     /***** abrir archivo para lectura e impreciones en pantalla *****/
     FILE * arcRegRd = FwsProdctCrtFle(rutaCompleta,1);
+    //FwsProdctRdHdr(arcRegRd);
+    //FwsProdctRdPrdS(arcRegRd,4);
 
     // navegar hasta un registro
     FwsProdctRdDspz(arcRegRd,4,4);
