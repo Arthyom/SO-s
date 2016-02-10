@@ -81,6 +81,11 @@ FwsProdct   *   FwsProdctCrear  ( int id, char * nombre, float precio, int stock
     return nuevoPrdct;
 }
 
+FwsProdct   *   FwsProdctVdCr   ( ){
+    // crear un produto vacio
+    FwsProdct * pVacio = (FwsProdct*) malloc(sizeof(FwsProdct));
+    return pVacio;
+}
 
 void            FwsProdctRgst   ( FILE * archivoRegst, FwsProdct * nuevoPrdct ){
     // registrar el producto creado en el archivo de registro
@@ -102,5 +107,16 @@ void            FwsProdctPntHdr ( FILE * archivoRegst, int  dims){
 
 }
 
+void            FwsProdctPntPrd ( FILE * archivoRegst, FwsProdct * pdctEntrada){
+    // imprimir en el archivo los productos que se han ordenado
+    fwrite( pdctEntrada, sizeof(FwsProdct), 1 , archivoRegst);
+}
+
+void            FwsProdctRdPrd  ( FILE * archivoRgst ){
+    // imprimir en pantalla los registros del archivo
+    FwsProdct * al = FwsProdctVdCr();
+    fread( al, sizeof(FwsProdct), 1 , archivoRgst);
+    printf(" -> %d \t %s \t %f \t %d \t %d <-",al->PrdctId, al->PrdctNombre, al->PrdctPrecio, al->PrdctStock, al->PrdctBandera);
+}
 
 #endif // FWSBINSTATICFILE_H
