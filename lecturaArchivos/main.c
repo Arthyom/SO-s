@@ -11,25 +11,21 @@ int main (){
     // escribir cabecera en el archivo
     FwsProdctImprmrHdr(archRegWr,4);
 
-    // escribir datos de los productos
-    FwsProdct * p1 = FwsProdctCrtPrm(1,"taco",12.4,10,1);
-    FwsProdct * p2 = FwsProdctCrtPrm(2,"buro",10.9,14,1);
-    FwsProdct * p3 = FwsProdctCrtPrm(3,"kezo",40.2,62,1);
-    FwsProdct * p4 = FwsProdctCrtPrm(4,"zope",45.2,94,1);
-    FwsProdctImprmrPrdct( archRegWr, p1);
-    FwsProdctImprmrPrdct( archRegWr, p2);
-    FwsProdctImprmrPrdct( archRegWr, p3);
-    FwsProdctImprmrPrdct( archRegWr, p4);
+    // crear un vector de objetos
+    FwsProdct * p1 = FwsProdctCrtPrm(1,"taco",12,12,1);
+    FwsProdct * p2 = FwsProdctCrtPrm(2,"taco",12,12,1);
+    FwsProdct * p3 = FwsProdctCrtPrm(3,"taco",12,12,1);
+    FwsProdct * p4 = FwsProdctCrtPrm(4,"taco",12,12,1);
+    FwsProdct * p5 = FwsProdctCrtPrm(5,"taco",12,12,1);
+    FwsProdct * p6 = FwsProdctCrtPrm(6,"taco",12,12,1);
+    FwsProdct * p7 = FwsProdctCrtPrm(7,"taco",12,12,1);
+
+    FwsProdctImprmrPrdcts(7,archRegWr,p1,p2,p3,p4,p5,p6,p7);
 
 
     // cerrar archivo para escritura binaria
     fclose( archRegWr);
 
-
-    // eliminar un registro
-    FwsProdctLgcElim(rutaCompleta, 2, 4);
-
-    /***** abrir archivo para lectura e impreciones en pantalla *****/
     FILE * arcRegRd = FwsProdctCrtFl(rutaCompleta,1);
     //FwsProdctDsplyHdr(arcRegRd);
     FwsProdctDsplyPrdcts(arcRegRd,4);

@@ -165,6 +165,7 @@ void            FwsProdctDsplyPrdcts    ( FILE * archivoRgst,int hdr ){
     }
 }
 
+
 void            FwsProdctDsplyDspz      ( FILE * archivoRgst, int indx, int hdr ){
     // mover el puntero hasta el registro[indx]
     /* se usa la formula */
@@ -176,6 +177,7 @@ void            FwsProdctDsplyDspz      ( FILE * archivoRgst, int indx, int hdr 
     FwsProdctDsplyPrdct(lectura);
 }
 
+
 FwsProdct   *   FwsProdctBscrPrdct      ( FILE * archivoRgst, int indx, int hdr ){
     // buscar un dice especifico y regresarlo
     fseek(archivoRgst, hdr+(indx-1)*sizeof(FwsProdct) ,SEEK_SET);
@@ -183,6 +185,7 @@ FwsProdct   *   FwsProdctBscrPrdct      ( FILE * archivoRgst, int indx, int hdr 
     fread( buscado, sizeof(FwsProdct), 1 , archivoRgst);
     return buscado;
 }
+
 
 int             FwsProdctLgcElim        ( char * rutaCompleta,int indx, int hdr ){
     // eliminar un registro mediante eliminacion logica
@@ -211,6 +214,29 @@ int             FwsProdctLgcElim        ( char * rutaCompleta,int indx, int hdr 
 }
 
 
+FwsProdct   **  FwsProdctCrtVctrPrdct   ( int dims ){
+    // crear un vector de productos vacios
+    FwsProdct ** vector = (FwsProdct**) malloc(sizeof(FwsProdct*)* dims);
+    int i ;
+    for (i = 0 ; i < dims; i ++)
+        vector[i] = FwsProdctCrtVd();
+
+    return vector;
+}
+
+void            FwsProdctImprmrPrdcts   ( int dims, FILE * archRgst, ...){
+    //agregar n objetos al archivo
+    va_list listaPrm;
+    va_start(listaPrm,archRgst);
+    int i;
+    for (i = 0 ; i < dims; i++ ){
+        // sacer de la lista y agregar
+        FwsProdct * pn = va_arg(listaPrm,FwsProdct *);
+        FwsProdctImprmrPrdct(archRgst,pn);
+    }
+
+    va_end(listaPrm);
+}
 
 #endif // FWSBINSTATICFILE_H
 
