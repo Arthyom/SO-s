@@ -31,9 +31,9 @@
     /********************************************************/
     /*********     prototipo y declaracion       ************/
     /********************************************************/
-
-//*************> FUNCIONES MISELANEAS
-
+void            FwsProdctApuntar        ( FILE * archIn, int indx){
+     fseek(archIn, sizeof(int)+(indx-1)*sizeof(FwsProdct) ,SEEK_SET);
+}
 
 int             FwsProdctVrfcrRng       ( int indx, int hdr ){
     if ( indx <= hdr )
@@ -78,7 +78,7 @@ FILE        *   FwsProdctCrtFl          ( char * ruta, int modo ){
 
         case 3:
             // escritura binaria
-            archivoRgst = fopen( ruta, "ab");
+            archivoRgst = fopen( ruta, "ab+");
             if ( archivoRgst ){
                 return archivoRgst;
             }
@@ -133,7 +133,6 @@ void            FwsProdctDsplyHdr       ( char * ruta ){
     fclose(archivoRegst);
 }
 
-
 void            FwsProdctImprmrHdr      ( char * ruta, int  dims){
     FILE * archivoRegst = FwsProdctCrtFl(ruta,3);
     // imprimir el encavezado en el archivo binario
@@ -141,13 +140,10 @@ void            FwsProdctImprmrHdr      ( char * ruta, int  dims){
     fclose(archivoRegst);
 }
 
-
 void            FwsProdctImprmrPrdct    ( FILE *archivoRegistro, FwsProdct * pdctEntrada){
     // imprimir en el archivo los productos que se han ordenado
     fwrite( pdctEntrada, sizeof(FwsProdct), 1 , archivoRegistro);
 }
-
-
 
 void            FwsProdctDsplyPrdcts    ( FILE * archivoRgst ){
     // imprimir en pantalla los registros del archivo
@@ -161,8 +157,9 @@ void            FwsProdctDsplyPrdcts    ( FILE * archivoRgst ){
     printf("vacio");
 }
 
+void            FwsProdctDsplyDspz      ( char * ruta, int indx ){
 
-void            FwsProdctDsplyDspz      ( FILE * archivoRgst, int indx, int hdr ){
+    FILE * archivoRgst = FwsProdctCrtFl(ruta,1);
     // mover el puntero hasta el registro[indx]
     /* se usa la formula */
     fseek(archivoRgst, sizeof(int)+(indx-1)*sizeof(FwsProdct) ,SEEK_SET);
@@ -170,48 +167,20 @@ void            FwsProdctDsplyDspz      ( FILE * archivoRgst, int indx, int hdr 
     // leer caracteres en esa posicion
     FwsProdct * lectura = FwsProdctCrtVd();
     fread( lectura, sizeof(FwsProdct), 1 , archivoRgst);
+    fclose(archivoRgst);
     FwsProdctDsplyPrdct(lectura);
 }
 
-
-
-FwsProdct   *   FwsProdctBscrPrdct      ( FILE * archivoRgst, int indx, int hdr ){
+FwsProdct   *   FwsProdctBscrPrdct      ( FILE * archivoRgst, int indx ){
     // buscar un dice especifico y regresarlo
     fseek(archivoRgst, sizeof(int)+(indx-1)*sizeof(FwsProdct) ,SEEK_SET);
     FwsProdct * buscado = FwsProdctCrtVd();
     fread( buscado, sizeof(FwsProdct), 1 , archivoRgst);
-    return buscado;
+    if (buscado)
+        return buscado;
+
+    return NULL;
 }
-
-
-
-int             FwsProdctLgcElim        ( char * rutaCompleta,int indx, int hdr ){
-    // eliminar un registro mediante eliminacion logica
-    if ( FwsProdctVrfcrRng(indx,hdr)){
-
-        // abrir archivo para lectura
-        FILE * archLectura = FwsProdctCrtFl(rutaCompleta,1);
-        // buscar indice
-        FwsProdct * prdctElm = FwsProdctBscrPrdct(archLectura,indx,hdr);
-        prdctElm->PrdctBandera = 1;
-        prdctElm->PrdctId = 23;
-        // cerrar archivo para lectura
-        fclose(archLectura);
-
-        // abrir archivo para escritura
-        FILE * archEscritura = FwsProdctCrtFl(rutaCompleta,3);
-        // navegar hasta la posicion indx
-        fseek(archEscritura, hdr+(indx-1)*sizeof(FwsProdct) ,SEEK_END);
-        // sobreescribir objeto en el archivo
-        FwsProdctImprmrPrdct(archEscritura,prdctElm);
-        fclose(archEscritura);
-
-        return 1;
-    }
-    return 0;
-}
-
-
 
 FwsProdct   **  FwsProdctCrtVctrPrdct   ( int dims ){
     // crear un vector de productos vacios
@@ -257,6 +226,7 @@ void            FwsProdctAgregar        ( int dims, char * ruta ){
     fclose(fwrt);
 }
 
+
 void            FwsProdctMostrar        ( char * ruta){
     // abrir archivo para lectura
     FILE * flect = FwsProdctCrtFl(ruta,1);
@@ -264,6 +234,48 @@ void            FwsProdctMostrar        ( char * ruta){
     FwsProdctDsplyPrdcts(flect);
     printf("\n");
     fclose(flect);
+}
+
+
+void            FwsProdctCloneFl        ( char * ruta, FILE * archVij ){
+    // mover todos los datos del archivo viejo al nuevo
+    FwsProdct * newProduct = FwsProdctCrtVd();
+
+}
+
+
+void            FwsProdctElimLG         ( char * ruta, int indx ){
+
+    /*** buscar registro ***/
+
+    // abrir el archivo para lectura
+    FILE *archLect = FwsProdctCrtFl(ruta,1);
+
+    // eliminar un registro con el indice indicado
+    FwsProdct * rgstElim = FwsProdctBscrPrdct(archLect,indx);
+
+    if(rgstElim){
+        // cambiar bandera, ELIMINACION LOGICA
+        rgstElim->PrdctBandera = 0 ;
+
+        // cerrar el archivo para lectura
+        fclose(archLect);
+
+
+        /*** reescribir registro ***/
+        // abrir el arcchivo para escritura
+        FILE * archEscrt = FwsProdctCrtFl(ruta,1);
+
+        // navegar a la posicion indicada
+        FwsProdctApuntar(archEscrt,indx);
+
+        // reescribir el registro eliminado
+        fwrite(rgstElim,sizeof(FwsProdct),1,archEscrt);
+
+        // cerrar el archivo
+        fclose(archEscrt);
+    }
+    return NULL;
 }
 
 

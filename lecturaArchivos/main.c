@@ -8,14 +8,18 @@ int main (){
 
     // iniciar el archivo
     FwsProdctInitFile(rutaCompleta);
+
     FwsProdctImprmrHdr(rutaCompleta,hdr);
     FwsProdctDsplyHdr(rutaCompleta);
+
     FwsProdctAgregar(hdr,rutaCompleta);
     FwsProdctMostrar(rutaCompleta);
 
+    //FwsProdctDsplyDspz(rutaCompleta,6);
 
+    FwsProdctElimLG(rutaCompleta,3);
 
-
+    FwsProdctMostrar(rutaCompleta);
 
 
 
