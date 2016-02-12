@@ -7,9 +7,9 @@ int main (){
     int hdr = 10;
 
     // iniciar el archivo
-    FwsProdctInitFile(rutaCompleta);
+    FwsProdctInitFile(rutaCompleta,hdr);
 
-    FwsProdctImprmrHdr(rutaCompleta,hdr);
+
     FwsProdctDsplyHdr(rutaCompleta);
 
     FwsProdctAgregar(hdr,rutaCompleta);
@@ -18,6 +18,9 @@ int main (){
     //FwsProdctDsplyDspz(rutaCompleta,6);
 
     FwsProdctElimLG(rutaCompleta,3);
+    FwsProdctElimLG(rutaCompleta,4);
+    FwsProdctElimLG(rutaCompleta,8);
+    FwsProdctElimLG(rutaCompleta,7);
 
     FwsProdctMostrar(rutaCompleta);
 

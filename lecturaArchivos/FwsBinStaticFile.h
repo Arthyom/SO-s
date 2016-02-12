@@ -112,9 +112,10 @@ FwsProdct   *   FwsProdctCrtVd          ( ){
     return pVacio;
 }
 
-void            FwsProdctInitFile       ( char * rutaCompleta ){
+void            FwsProdctInitFile       ( char * rutaCompleta, int hdr ){
     // crear un archivo nuevo
     FILE * arch = FwsProdctCrtFl(rutaCompleta,2);
+    FwsProdctImprmrHdr(arch,hdr);
     fclose(arch);
 }
 
@@ -133,8 +134,7 @@ void            FwsProdctDsplyHdr       ( char * ruta ){
     fclose(archivoRegst);
 }
 
-void            FwsProdctImprmrHdr      ( char * ruta, int  dims){
-    FILE * archivoRegst = FwsProdctCrtFl(ruta,3);
+void            FwsProdctImprmrHdr      ( FILE * archivoRegst, int  dims){
     // imprimir el encavezado en el archivo binario
     fwrite( &dims,sizeof(int),1,archivoRegst );
     fclose(archivoRegst);
