@@ -237,13 +237,6 @@ void            FwsProdctMostrar        ( char * ruta){
 }
 
 
-void            FwsProdctCloneFl        ( char * ruta, FILE * archVij ){
-    // mover todos los datos del archivo viejo al nuevo
-    FwsProdct * newProduct = FwsProdctCrtVd();
-
-}
-
-
 void            FwsProdctElimLG         ( char * ruta, int indx ){
 
     /*** buscar registro ***/
@@ -278,6 +271,46 @@ void            FwsProdctElimLG         ( char * ruta, int indx ){
     return NULL;
 }
 
+void            FwsProdctActlzr         ( char * ruta, int indx, int modo, void * valor ){
+    // cambiar el valor de un registro
+
+    /// busca el registro indicado
+    FILE *archLect = FwsProdctCrtFl(ruta,1);
+    FwsProdct * update = FwsProdctBscrPrdct(archLect,indx);
+
+    if (update){
+        // cambiar valores segun modo
+        switch (modo){
+
+            case 1:
+                // cabiar nombre de regisro
+                update->PrdctNombre = ((char *) valor);
+            break;
+
+            case 2:
+                // cambiar el precio
+                update->PrdctPrecio = *((float*) valor);
+            break;
+
+            case 3:
+                // cambiar el stok
+                update->PrdctStock = *((int*) valor);
+            break;
+        }
+        fclose(archLect);
+
+        /*** comenzar la escritura de actualizacion ***/
+        FILE *archRd = FwsProdctCrtFl(ruta,1);
+
+        // apuntar a la poscion indicada
+        FwsProdctApuntar(archRd,indx);
+
+        // realizar escritura
+        fwrite(update,sizeof(FwsProdct),1,archRd);
+
+        fclose(archRd);
+    }
+}
 
 #endif // FWSBINSTATICFILE_H
 

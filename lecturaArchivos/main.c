@@ -9,19 +9,14 @@ int main (){
     // iniciar el archivo
     FwsProdctInitFile(rutaCompleta,hdr);
 
-
-    FwsProdctDsplyHdr(rutaCompleta);
-
     FwsProdctAgregar(hdr,rutaCompleta);
     FwsProdctMostrar(rutaCompleta);
 
-    //FwsProdctDsplyDspz(rutaCompleta,6);
 
-    FwsProdctElimLG(rutaCompleta,3);
-    FwsProdctElimLG(rutaCompleta,4);
-    FwsProdctElimLG(rutaCompleta,8);
-    FwsProdctElimLG(rutaCompleta,7);
-
+    // acutlizar indices
+    float s = 23.34;
+    int a = 123;
+    FwsProdctActlzr(rutaCompleta,3,3,&a);
     FwsProdctMostrar(rutaCompleta);
 
 
