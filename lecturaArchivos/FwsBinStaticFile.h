@@ -26,7 +26,7 @@
     typedef struct{
 
         int         PrdctId;
-        char    *   PrdctNombre;
+        char        PrdctNombre[20];
         float       PrdctPrecio;
         int         PrdctStock;
         int         PrdctBandera;
@@ -103,7 +103,7 @@ FwsProdct   *   FwsProdctCrtPrm         ( int id, char * nombre, float precio, i
 
     FwsProdct * nuevoPrdct = (FwsProdct*) malloc( sizeof(FwsProdct));
     nuevoPrdct->PrdctId     = id;
-    nuevoPrdct->PrdctNombre = nombre;
+    //nuevoPrdct->PrdctNombre = nombre;
     nuevoPrdct->PrdctPrecio = precio;
     nuevoPrdct->PrdctStock  = stock;
     nuevoPrdct->PrdctBandera = bandera;
@@ -117,11 +117,16 @@ FwsProdct   *   FwsProdctCrtVd          ( ){
     FwsProdct * pVacio = (FwsProdct*) malloc(sizeof(FwsProdct));
     pVacio->PrdctId = 0;
     pVacio->PrdctBandera = 1;
-    pVacio->PrdctNombre = NULL;
+
+    int i ;
+    for (i=0; i < 20 ; i ++ )
+        pVacio->PrdctNombre[i]='0';
+
     pVacio->PrdctPrecio = 0;
     pVacio->PrdctStock = 0;
     return pVacio;
 }
+
 
 
 FwsProdct   *   FwsProdctScnr           ( ){
@@ -137,19 +142,29 @@ FwsProdct   *   FwsProdctScnr           ( ){
 }
 
 
-void            FwsProdctInitFile       ( char * rutaCompleta, int hdr ){
+
+void            FwsProdctInitFile       ( char * rutaCompleta, int hdr, int modo ){
     // crear un archivo nuevo
+    if (modo == 0){
     FILE * arch = FwsProdctCrtFl(rutaCompleta,2);
     FwsProdctImprmrHdr(arch,hdr);
     fclose(arch);
+    }
+    else{
+        FILE * arch = FwsProdctCrtFl(rutaCompleta,1);
+        FwsProdctImprmrHdr(arch,hdr);
+        fclose(arch);
+    }
 }
+
 
 
 void            FwsProdctDsplyPrdct     ( FwsProdct * al ){
     // imprimir un producto indicado
     if (al->PrdctBandera !=0 )
-     printf(" \t -> %d \t\t %s \t %f \t %d \t %d  \n",al->PrdctId, al->PrdctNombre, al->PrdctPrecio, al->PrdctStock, al->PrdctBandera);
+     printf(" \t -> %d \t\t %s \t\t %f \t\t %d \t\t %d  \n",al->PrdctId, al->PrdctNombre, al->PrdctPrecio, al->PrdctStock, al->PrdctBandera);
 }
+
 
 
 
@@ -159,10 +174,9 @@ int             FwsProdctDsplyHdr       ( char * ruta ){
     int dims ;
     fread( &dims,sizeof(int),1,archivoRegst);
     fclose(archivoRegst);
-    if(dims==0)
-        return 0;
     return dims;
 }
+
 
 
 
@@ -174,10 +188,12 @@ void            FwsProdctImprmrHdr      ( FILE * archivoRegst, int  dims){
 
 
 
+
 void            FwsProdctImprmrPrdct    ( FILE *archivoRegistro, FwsProdct * pdctEntrada){
     // imprimir en el archivo los productos que se han ordenado
     fwrite( pdctEntrada, sizeof(FwsProdct), 1 , archivoRegistro);
 }
+
 
 
 
@@ -196,6 +212,7 @@ void            FwsProdctDsplyPrdcts    ( char * ruta ){
 }
 
 
+
 void            FwsProdctDsplyDspz      ( char * ruta, int indx ){
 
     FILE * archivoRgst = FwsProdctCrtFl(ruta,1);
@@ -211,16 +228,20 @@ void            FwsProdctDsplyDspz      ( char * ruta, int indx ){
 }
 
 
-FwsProdct   *   FwsProdctBscrPrdct      ( FILE * archivoRgst, int indx ){
+
+FwsProdct   *   FwsProdctBscrPrdct      ( char * ruta, int indx ){
+
+    FILE * archivoRgst = FwsProdctCrtFl(ruta,1);
     // buscar un dice especifico y regresarlo
     fseek(archivoRgst, sizeof(int)+(indx-1)*sizeof(FwsProdct) ,SEEK_SET);
     FwsProdct * buscado = FwsProdctCrtVd();
     fread( buscado, sizeof(FwsProdct), 1 , archivoRgst);
-    if (buscado)
+    if (buscado && buscado->PrdctBandera != 0)
         return buscado;
 
     return NULL;
 }
+
 
 
 FwsProdct   **  FwsProdctCrtVctrPrdct   ( int dims ){
@@ -232,6 +253,7 @@ FwsProdct   **  FwsProdctCrtVctrPrdct   ( int dims ){
 
     return vector;
 }
+
 
 
 void            FwsProdctImprmrPrdcts   ( int dims, FILE * archRgst, ...){
@@ -249,9 +271,19 @@ void            FwsProdctImprmrPrdcts   ( int dims, FILE * archRgst, ...){
 }
 
 
+int             FwsProdctLastId         ( char * ruta){
+
+    FwsProdct * p = FwsProdctBscrPrdct(ruta,FwsProdctDsplyHdr(ruta));
+    return p->PrdctId;
+}
+
+
 void            FwsProdctAgregar        ( int dims, char * ruta ){
     // abrir archivo para lectura
     FILE * fwrt = FwsProdctCrtFl(ruta,3);
+
+
+    int nu = FwsProdctLastId(ruta);
 
     // crear obejts y agregarlos al archivo
     FwsProdct ** vect = FwsProdctCrtVctrPrdct(dims);
@@ -259,7 +291,7 @@ void            FwsProdctAgregar        ( int dims, char * ruta ){
     for( i = 0 ; i < dims ; i++ ){
         // capturar datos de los objetos
         //vect[i] =FwsProdctScnr();
-        vect[i]->PrdctId = i;
+        vect[i]->PrdctId = i+1+nu;
 
         // agregar al archivo
         FwsProdctImprmrPrdct(fwrt,vect[i]);
@@ -267,6 +299,7 @@ void            FwsProdctAgregar        ( int dims, char * ruta ){
     }
     fclose(fwrt);
 }
+
 
 
 void            FwsProdctMostrar        ( char * ruta){
@@ -277,6 +310,7 @@ void            FwsProdctMostrar        ( char * ruta){
     printf("\n");
     fclose(flect);
 }
+
 
 
 void            FwsProdctElimLG         ( char * ruta, int indx ){
@@ -314,21 +348,24 @@ void            FwsProdctElimLG         ( char * ruta, int indx ){
 }
 
 
+
 void            FwsProdctActlzr         ( char * ruta, int indx, int modo, void * valor ){
     // cambiar el valor de un registro
 
     /// busca el registro indicado
     FILE *archLect = FwsProdctCrtFl(ruta,1);
     FwsProdct * update = FwsProdctBscrPrdct(archLect,indx);
-
+    if (update->PrdctBandera == 0)
+        return;
+    char nm[30];
     if (update){
         // cambiar valores segun modo
         switch (modo){
 
             case 1:
                 // cabiar nombre de regisro
-
-                update->PrdctNombre = ((char *) valor);
+                gets(nm);
+                strcpy(update->PrdctNombre, nm);
             break;
 
             case 2:
@@ -361,6 +398,7 @@ void            FwsProdctActlzr         ( char * ruta, int indx, int modo, void 
 }
 
 
+
 void            FwsProdctGetActlz       ( char * ruta, int indx, int campo, char * nm, float prc, int stck ){
     switch (campo) {
         case 1: FwsProdctActlzr(ruta,indx,campo,nm);break;
@@ -377,9 +415,10 @@ void            FwsProdctGetActlz       ( char * ruta, int indx, int campo, char
 
 }
 
+
 int             FwsProdctGetIndx        ( int hdr, int opc){
     // conseguir el indice
-    int indx ;
+    int indx = 0;
 
     switch(opc){
         case 1:
@@ -398,11 +437,8 @@ int             FwsProdctGetIndx        ( int hdr, int opc){
     }
     else
         return indx;
-
-
-
-
 }
+
 
 int             FwsProdctGetDims        ( ){
     FwsSttcsDsingle(15,"NUMERO DE REGISTROS A AGREGAR");
@@ -411,11 +447,12 @@ int             FwsProdctGetDims        ( ){
     return dims;
 }
 
+
 void            FwsProdctActHdr         ( char * ruta, int nuevoValor,int indc ){
     FILE * archLeer = FwsProdctCrtFl(ruta,1);
     int valor ;
     fread(&valor,sizeof(int),1,archLeer);
-    fclose;
+    fclose(archLeer);
 
     FILE * archRd = FwsProdctCrtFl(ruta,1);
     switch(indc){
@@ -432,6 +469,7 @@ void            FwsProdctActHdr         ( char * ruta, int nuevoValor,int indc )
     }
 }
 
+
 void            FwsProdctOk             ( int modo ){
     switch(modo){
 
@@ -446,65 +484,123 @@ void            FwsProdctOk             ( int modo ){
     }
 }
 
-int             FwsCall                 ( int opcion, char * ruta, int cnt ){
 
-    int indx;
+void    *       FwsProdctGetValue       ( int modo ){
+    int a;
+    float s;
+    char p[20];
 
-    int dims = 0 ;
-    int hdr = cnt;
+    switch (modo){
 
-    switch(opcion){
-        case 1:
-
-            if ( cnt != 0 ){
-                dims = FwsProdctGetDims();
-                FwsProdctAgregar(dims, ruta);
-                FwsProdctActHdr(ruta,dims,2);
-            }
-            else{
-                hdr = FwsProdctGetDims();
-                // iniciar el archivo
-                FwsProdctInitFile(ruta,hdr);
-                FwsProdctAgregar(hdr,ruta);
-            }
-            FwsProdctOk(1);
-        break;
-
-        case 2:
-           if (FwsProdctDsplyHdr(ruta)>0){
-               indx = FwsProdctGetIndx(hdr,1);
-               FwsProdctElimLG(ruta,indx);
-               FwsProdctActHdr(ruta,1,1);
-           }
-           else{
-               FwsSttcsDsingle(17,"ERROR!!!!! ARCHIBO VACIO ");
-               return 0 ;
-           }
-           FwsProdctOk(2);
-        break;
-
-        case 3:
-            if (FwsProdctDsplyHdr(ruta)>0){
-                indx = FwsProdctGetIndx(hdr,2);
-                FwsProdctElimLG(ruta,indx);
-                FwsProdctOk(3);
-            }
-            else{
-                FwsSttcsDsingle(17,"ERROR!!!!! ARCHIBO VACIO ");
-                return 0 ;}
-        break;
-
-        case 4:
-            FwsProdctDsplyPrdcts(ruta);
-        break;
-
-        case 5:
-            printf(" \t \t \t   -> %d \n",FwsProdctDsplyHdr(ruta) );
-        break;
+        case 1:scanf("%d",&a); return &a;
+        case 2:scanf("%f",&s); return &s;
+        case 3:scanf("%s",&p); return p;
 
     }
 
-    return dims;
+    return NULL;
+}
+
+
+int             FwsProdctGetMode        (){
+
+    FwsSttcsDdoble(21,"CAMPO A ACTUALIZAR");
+    int campo = FwsSttcsDmenu(4,"NOMBRE","PRECIO","STOCK","TODOS");
+    return campo;
+}
+
+
+int             FwsProdctVerArch        ( char * ruta ){
+    FILE * arc = FwsProdctCrtFl(ruta,1);
+    int n;
+    if( fread(&n,sizeof(int),1,arc)){
+        fclose(arc);
+        return 1;
+    }
+
+        fclose(arc);
+    return 0;
+}
+
+void            FwsCall                 ( int opcion, char * ruta ){
+
+    int indx;
+    int dims ;
+    int hdr ;
+
+    if ( FwsProdctVerArch(ruta)){
+        //printf("no vacio");
+         dims = FwsProdctDsplyHdr(ruta);
+         hdr = dims;
+
+        switch(opcion){
+            case 1:
+                dims = FwsProdctGetDims();
+                FwsProdctAgregar(dims, ruta);
+                FwsProdctActHdr(ruta,dims,2);
+                FwsProdctOk(1);
+            break;
+
+            case 2:
+               if (dims>0){
+                   indx = FwsProdctGetIndx(hdr,1);
+                   if (indx>0){
+                       FwsProdctElimLG(ruta,indx);
+                       FwsProdctActHdr(ruta,1,1);
+                   }
+                   else
+                       return 0;
+               }
+               else{
+                   FwsSttcsDsingle(17,"ERROR!!!!! ARCHIBO VACIO ");
+                   return 0 ;
+               }
+               FwsProdctOk(2);
+            break;
+
+            case 3:
+                if (dims>0){
+                    indx = FwsProdctGetIndx(hdr,2);
+                    // ver si el indice no ha sido borrado
+                    FwsProdct * ps = FwsProdctBscrPrdct(ruta,indx);
+                    if ( ps ){
+                        int modo = FwsProdctGetMode();
+                        switch(modo){
+                            case 1: FwsProdctGetActlz(ruta,indx,FWS_PRDCT_NM,"0",0,0);break;
+                            case 2: FwsProdctGetActlz(ruta,indx,FWS_PRDCT_PRC,0,*((float*) FwsProdctGetValue(2)),0);break;
+                            case 3: FwsProdctGetActlz(ruta,indx,FWS_PRDCT_STCK,0,0,*((int*) FwsProdctGetValue(1)));break;
+                            case 4: FwsProdctGetActlz(ruta,indx,FWS_PRDCT_TDS,"0",*((float*) FwsProdctGetValue(2)),*((int*) FwsProdctGetValue(1)));break;
+                        }
+                        FwsProdctOk(3);
+                    }
+                    else{
+                        FwsSttcsDsingle(17,"ERROR NO EXISTE EL INDICE");
+                    }
+                }
+                else{
+                    FwsSttcsDsingle(17,"ERROR!!!!! ARCHIBO VACIO ");
+                    return 0 ;}
+            break;
+
+            case 4:
+                FwsProdctDsplyPrdcts(ruta);
+            break;
+
+            case 5:
+                printf(" \t \t \t   -> %d \n",FwsProdctDsplyHdr(ruta) );
+            break;
+        }
+    }
+    else{
+        //FwsSttcsDmenu(6,"agregar", "eliminar","editar","mostar","ver encabezado","salir");
+        //printf("vacio");
+        hdr = FwsProdctGetDims();
+        dims = hdr;
+        // iniciar el archivo
+        FwsProdctInitFile(ruta,hdr,0);
+        FwsProdctAgregar(hdr,ruta);
+        FwsProdctOk(1);
+    }
 }
 
 

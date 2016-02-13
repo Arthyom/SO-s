@@ -4,14 +4,21 @@
 int main (){
 
     // concatenacion de ruta y nombre de archivo
-    char * rutaCompleta = FwsProdctGnrtDir("bin2.bin",FWS_RUTA_LOCAL);
-    int opcion,cnt = 0;
+    char * rutaCompleta = FwsProdctGnrtDir("bin1.bin",FWS_RUTA_LOCAL);
+    int opcion;
 
     do {
         FwsSttcsDdoble(21," TAKOS EL AZTECA ");
-        opcion = FwsSttcsDmenu(6,"agregar", "eliminar","editar","mostar","ver encabezado","salir");
-        cnt += FwsCall(opcion,rutaCompleta, cnt);
-        FwsSttcsLimpiar(15,"precione ENTER para continuar");
+        if ( FwsProdctVerArch(rutaCompleta)){
+            opcion = FwsSttcsDmenu(6,"AGREGAR", "ELIMINAR","EDITAR","MOSTRAR","VER ENCAVEZADO","SALIR");
+            FwsCall(opcion,rutaCompleta);
+            FwsSttcsLimpiar(15,"precione ENTER para continuar");
+        }
+        else{
+            opcion = FwsSttcsDmenu(6,"AGREGAR", "...","...","...","...","SALIR");
+            FwsCall(opcion,rutaCompleta);
+            FwsSttcsLimpiar(15,"precione ENTER para continuar");
+        }
     }while (opcion != 6);
 
 
