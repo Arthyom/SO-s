@@ -13,10 +13,9 @@ int main (){
     FwsProdctMostrar(rutaCompleta);
 
 
-    // acutlizar indices
-    float s = 23.34;
-    int a = 123;
-    FwsProdctActlzr(rutaCompleta,3,3,&a);
+
+
+    FwsProdctGetActlz(rutaCompleta,2,FWS_PRDCT_TDS,"nuevo nombre",1.12,32);
     FwsProdctMostrar(rutaCompleta);
 
 

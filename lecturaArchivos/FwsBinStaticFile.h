@@ -13,6 +13,10 @@
     # include <string.h>
 
     # define FWS_RUTA_LOCAL "C:/Users/frodo/Desktop/"
+    # define FWS_PRDCT_NM       1
+    # define FWS_PRDCT_PRC      2
+    # define FWS_PRDCT_STCK     3
+    # define FWS_PRDCT_TDS      4
 
     /********************************************************/
     /*********    declarar el tipo WFSprodct     ************/
@@ -112,6 +116,18 @@ FwsProdct   *   FwsProdctCrtVd          ( ){
     return pVacio;
 }
 
+FwsProdct   *   FwsProdctScnr           ( ){
+    // escanear los valores de un producto
+    FwsProdct * newPrdc = FwsProdctCrtVd();
+
+
+    scanf("%s",&newPrdc->PrdctNombre);
+    scanf("%f",&newPrdc->PrdctPrecio);
+    scanf("%d",&newPrdc->PrdctStock);
+
+    return newPrdc;
+}
+
 void            FwsProdctInitFile       ( char * rutaCompleta, int hdr ){
     // crear un archivo nuevo
     FILE * arch = FwsProdctCrtFl(rutaCompleta,2);
@@ -192,7 +208,6 @@ FwsProdct   **  FwsProdctCrtVctrPrdct   ( int dims ){
     return vector;
 }
 
-
 void            FwsProdctImprmrPrdcts   ( int dims, FILE * archRgst, ...){
     //agregar n objetos al archivo
     va_list listaPrm;
@@ -207,7 +222,6 @@ void            FwsProdctImprmrPrdcts   ( int dims, FILE * archRgst, ...){
     va_end(listaPrm);
 }
 
-
 void            FwsProdctAgregar        ( int dims, char * ruta ){
     // abrir archivo para lectura
     FILE * fwrt = FwsProdctCrtFl(ruta,3);
@@ -217,6 +231,7 @@ void            FwsProdctAgregar        ( int dims, char * ruta ){
     int i;
     for( i = 0 ; i < dims ; i++ ){
         // capturar datos de los objetos
+        //vect[i] =FwsProdctScnr();
         vect[i]->PrdctId = i;
 
         // agregar al archivo
@@ -226,7 +241,6 @@ void            FwsProdctAgregar        ( int dims, char * ruta ){
     fclose(fwrt);
 }
 
-
 void            FwsProdctMostrar        ( char * ruta){
     // abrir archivo para lectura
     FILE * flect = FwsProdctCrtFl(ruta,1);
@@ -235,7 +249,6 @@ void            FwsProdctMostrar        ( char * ruta){
     printf("\n");
     fclose(flect);
 }
-
 
 void            FwsProdctElimLG         ( char * ruta, int indx ){
 
@@ -284,6 +297,7 @@ void            FwsProdctActlzr         ( char * ruta, int indx, int modo, void 
 
             case 1:
                 // cabiar nombre de regisro
+
                 update->PrdctNombre = ((char *) valor);
             break;
 
@@ -296,6 +310,10 @@ void            FwsProdctActlzr         ( char * ruta, int indx, int modo, void 
                 // cambiar el stok
                 update->PrdctStock = *((int*) valor);
             break;
+
+           // actualizacion manual de todos los campos
+           case 4: update = FwsProdctScnr(); break;
+
         }
         fclose(archLect);
 
@@ -311,6 +329,23 @@ void            FwsProdctActlzr         ( char * ruta, int indx, int modo, void 
         fclose(archRd);
     }
 }
+
+void            FwsProdctGetActlz       ( char * ruta, int indx, int campo, char * nm, float prc, int stck ){
+    switch (campo) {
+        case 1: FwsProdctActlzr(ruta,indx,campo,nm);break;
+        case 2: FwsProdctActlzr(ruta,indx,campo,&prc);break;
+        case 3: FwsProdctActlzr(ruta,indx,campo,&stck);break;
+
+        // actualizar todo el registo
+        case 4:
+             FwsProdctActlzr(ruta,indx,1,nm);
+             FwsProdctActlzr(ruta,indx,2,&prc);
+             FwsProdctActlzr(ruta,indx,3,&stck);
+        break;
+    }
+
+}
+
 
 #endif // FWSBINSTATICFILE_H
 
