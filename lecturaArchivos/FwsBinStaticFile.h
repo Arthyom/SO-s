@@ -41,13 +41,11 @@ void            FwsProdctApuntar        ( FILE * archIn, int indx){
      fseek(archIn, sizeof(int)+(indx-1)*sizeof(FwsProdct) ,SEEK_SET);
 }
 
-
 int             FwsProdctVrfcrRng       ( int indx, int hdr ){
     if ( indx <= hdr )
         return 1;
     return 0;
 }
-
 
 char        *   FwsProdctGnrtDir        ( char * nombre, char * ruta ){
 
@@ -58,7 +56,6 @@ char        *   FwsProdctGnrtDir        ( char * nombre, char * ruta ){
 
     return rutaCompleta;
 }
-
 
 FILE        *   FwsProdctCrtFl          ( char * ruta, int modo ){
     // abrir el archivo segun la modalidad
@@ -98,7 +95,6 @@ FILE        *   FwsProdctCrtFl          ( char * ruta, int modo ){
     return NULL;
 }
 
-
 FwsProdct   *   FwsProdctCrtPrm         ( int id, char * nombre, float precio, int stock, int bandera ){
 
     FwsProdct * nuevoPrdct = (FwsProdct*) malloc( sizeof(FwsProdct));
@@ -110,7 +106,6 @@ FwsProdct   *   FwsProdctCrtPrm         ( int id, char * nombre, float precio, i
 
     return nuevoPrdct;
 }
-
 
 FwsProdct   *   FwsProdctCrtVd          ( ){
     // crear un produto vacio
@@ -127,8 +122,6 @@ FwsProdct   *   FwsProdctCrtVd          ( ){
     return pVacio;
 }
 
-
-
 FwsProdct   *   FwsProdctScnr           ( ){
     // escanear los valores de un producto
     FwsProdct * newPrdc = FwsProdctCrtVd();
@@ -140,8 +133,6 @@ FwsProdct   *   FwsProdctScnr           ( ){
 
     return newPrdc;
 }
-
-
 
 void            FwsProdctInitFile       ( char * rutaCompleta, int hdr, int modo ){
     // crear un archivo nuevo
@@ -157,16 +148,11 @@ void            FwsProdctInitFile       ( char * rutaCompleta, int hdr, int modo
     }
 }
 
-
-
 void            FwsProdctDsplyPrdct     ( FwsProdct * al ){
     // imprimir un producto indicado
     if (al->PrdctBandera !=0 )
      printf(" \t -> %d \t\t %s \t\t %f \t\t %d \t\t %d  \n",al->PrdctId, al->PrdctNombre, al->PrdctPrecio, al->PrdctStock, al->PrdctBandera);
 }
-
-
-
 
 int             FwsProdctDsplyHdr       ( char * ruta ){
     FILE * archivoRegst = FwsProdctCrtFl(ruta,1);
@@ -177,29 +163,20 @@ int             FwsProdctDsplyHdr       ( char * ruta ){
     return dims;
 }
 
-
-
-
 void            FwsProdctImprmrHdr      ( FILE * archivoRegst, int  dims){
     // imprimir el encavezado en el archivo binario
     fwrite( &dims,sizeof(int),1,archivoRegst );
     fclose(archivoRegst);
 }
 
-
-
-
 void            FwsProdctImprmrPrdct    ( FILE *archivoRegistro, FwsProdct * pdctEntrada){
     // imprimir en el archivo los productos que se han ordenado
     fwrite( pdctEntrada, sizeof(FwsProdct), 1 , archivoRegistro);
 }
 
-
-
-
 void            FwsProdctDsplyPrdcts    ( char * ruta ){
     FILE * archivoRgst = FwsProdctCrtFl(ruta,1);
-    printf("\n \n");
+    printf("");
     // imprimir en pantalla los registros del archivo
     fseek(archivoRgst, sizeof(int) ,SEEK_SET);
     FwsProdct * al = FwsProdctCrtVd();
@@ -208,10 +185,9 @@ void            FwsProdctDsplyPrdcts    ( char * ruta ){
         FwsProdctDsplyPrdct(al);
         fread( al, sizeof(FwsProdct), 1 , archivoRgst);
     }
-    printf("\n \n");
+     printf("\n");
+
 }
-
-
 
 void            FwsProdctDsplyDspz      ( char * ruta, int indx ){
 
@@ -227,8 +203,6 @@ void            FwsProdctDsplyDspz      ( char * ruta, int indx ){
     FwsProdctDsplyPrdct(lectura);
 }
 
-
-
 FwsProdct   *   FwsProdctBscrPrdct      ( char * ruta, int indx ){
 
     FILE * archivoRgst = FwsProdctCrtFl(ruta,1);
@@ -242,8 +216,6 @@ FwsProdct   *   FwsProdctBscrPrdct      ( char * ruta, int indx ){
     return NULL;
 }
 
-
-
 FwsProdct   **  FwsProdctCrtVctrPrdct   ( int dims ){
     // crear un vector de productos vacios
     FwsProdct ** vector = (FwsProdct**) malloc(sizeof(FwsProdct*)* dims);
@@ -253,8 +225,6 @@ FwsProdct   **  FwsProdctCrtVctrPrdct   ( int dims ){
 
     return vector;
 }
-
-
 
 void            FwsProdctImprmrPrdcts   ( int dims, FILE * archRgst, ...){
     //agregar n objetos al archivo
@@ -270,13 +240,11 @@ void            FwsProdctImprmrPrdcts   ( int dims, FILE * archRgst, ...){
     va_end(listaPrm);
 }
 
-
 int             FwsProdctLastId         ( char * ruta){
 
     FwsProdct * p = FwsProdctBscrPrdct(ruta,FwsProdctDsplyHdr(ruta));
     return p->PrdctId;
 }
-
 
 void            FwsProdctAgregar        ( int dims, char * ruta ){
     // abrir archivo para lectura
@@ -300,8 +268,6 @@ void            FwsProdctAgregar        ( int dims, char * ruta ){
     fclose(fwrt);
 }
 
-
-
 void            FwsProdctMostrar        ( char * ruta){
     // abrir archivo para lectura
     FILE * flect = FwsProdctCrtFl(ruta,1);
@@ -310,8 +276,6 @@ void            FwsProdctMostrar        ( char * ruta){
     printf("\n");
     fclose(flect);
 }
-
-
 
 void            FwsProdctElimLG         ( char * ruta, int indx ){
 
@@ -346,8 +310,6 @@ void            FwsProdctElimLG         ( char * ruta, int indx ){
     }
     return NULL;
 }
-
-
 
 void            FwsProdctActlzr         ( char * ruta, int indx, int modo, void * valor ){
     // cambiar el valor de un registro
@@ -397,8 +359,6 @@ void            FwsProdctActlzr         ( char * ruta, int indx, int modo, void 
     }
 }
 
-
-
 void            FwsProdctGetActlz       ( char * ruta, int indx, int campo, char * nm, float prc, int stck ){
     switch (campo) {
         case 1: FwsProdctActlzr(ruta,indx,campo,nm);break;
@@ -414,7 +374,6 @@ void            FwsProdctGetActlz       ( char * ruta, int indx, int campo, char
     }
 
 }
-
 
 int             FwsProdctGetIndx        ( int hdr, int opc){
     // conseguir el indice
@@ -439,14 +398,12 @@ int             FwsProdctGetIndx        ( int hdr, int opc){
         return indx;
 }
 
-
 int             FwsProdctGetDims        ( ){
     FwsSttcsDsingle(15,"NUMERO DE REGISTROS A AGREGAR");
     int dims;
     scanf("%d",&dims);
     return dims;
 }
-
 
 void            FwsProdctActHdr         ( char * ruta, int nuevoValor,int indc ){
     FILE * archLeer = FwsProdctCrtFl(ruta,1);
@@ -469,7 +426,6 @@ void            FwsProdctActHdr         ( char * ruta, int nuevoValor,int indc )
     }
 }
 
-
 void            FwsProdctOk             ( int modo ){
     switch(modo){
 
@@ -483,7 +439,6 @@ void            FwsProdctOk             ( int modo ){
 
     }
 }
-
 
 void    *       FwsProdctGetValue       ( int modo ){
     int a;
@@ -501,14 +456,12 @@ void    *       FwsProdctGetValue       ( int modo ){
     return NULL;
 }
 
-
 int             FwsProdctGetMode        (){
 
     FwsSttcsDdoble(21,"CAMPO A ACTUALIZAR");
     int campo = FwsSttcsDmenu(4,"NOMBRE","PRECIO","STOCK","TODOS");
     return campo;
 }
-
 
 int             FwsProdctVerArch        ( char * ruta ){
     FILE * arc = FwsProdctCrtFl(ruta,1);
@@ -583,6 +536,7 @@ void            FwsCall                 ( int opcion, char * ruta ){
             break;
 
             case 4:
+                FwsSttcsDSubLn(8,"  Id                     Nombre                   Precio            Existencia        Estado");
                 FwsProdctDsplyPrdcts(ruta);
             break;
 
@@ -603,6 +557,20 @@ void            FwsCall                 ( int opcion, char * ruta ){
     }
 }
 
+int             FwsFileExstFl           ( char * rutaCompleta ){
+
+    int opcion = FwsSttcsDmenu(6,"AGREGAR", "ELIMINAR","EDITAR","MOSTRAR","VER ENCAVEZADO","SALIR");
+    FwsCall(opcion,rutaCompleta);
+    FwsSttcsLimpiar(15,"precione ENTER para continuar");
+    return opcion;
+}
+
+int             FwsFileNtExstFl         ( char * rutaCompleta ){
+    int opcion = FwsSttcsDmenu(6,"AGREGAR", "...","...","...","...","SALIR");
+    FwsCall(opcion,rutaCompleta);
+    FwsSttcsLimpiar(15,"precione ENTER para continuar");
+    return opcion;
+}
 
 #endif // FWSBINSTATICFILE_H
 
