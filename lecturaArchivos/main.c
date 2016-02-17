@@ -1,6 +1,7 @@
 # include "FwsBinStaticFile.h"
 
 
+
 int main (){
 
     // concatenacion de ruta y nombre de archivo
@@ -12,11 +13,15 @@ int main (){
         FwsSttcsDdoble(21," TAKOS EL AZTECA ");
 
         if ( FwsProdctVerArch(rutaCompleta) )
-            opcion = FwsFileExstFl(rutaCompleta);
+            opcion = FwsProdctExstFl(rutaCompleta);
         else
-            opcion = FwsFileNtExstFl(rutaCompleta);
+            opcion = FwsProdctNtExstFl(rutaCompleta);
 
-    }while (opcion != 6);
+    }while (opcion != 8);
+
+
+
+
 
     return 0;
 }
