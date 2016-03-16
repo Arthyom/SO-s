@@ -33,6 +33,7 @@ namespace FsFc
             }
 
             pActual.GSestado = 4;
+            pActual.faltate = 0;
         }
     }
 }
