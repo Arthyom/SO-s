@@ -28,6 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button2 = new System.Windows.Forms.Button();
             this.gin = new System.Windows.Forms.GroupBox();
@@ -47,9 +49,12 @@
             this.lblPromedio = new System.Windows.Forms.Label();
             this.listView1 = new System.Windows.Forms.ListView();
             this.gGant = new System.Windows.Forms.GroupBox();
+            this.gant = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.groupBox1.SuspendLayout();
             this.gin.SuspendLayout();
             this.gStdcs.SuspendLayout();
+            this.gGant.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.gant)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -241,18 +246,33 @@
             // 
             // gGant
             // 
+            this.gGant.Controls.Add(this.gant);
             this.gGant.Location = new System.Drawing.Point(2, 226);
             this.gGant.Name = "gGant";
-            this.gGant.Size = new System.Drawing.Size(598, 231);
+            this.gGant.Size = new System.Drawing.Size(598, 256);
             this.gGant.TabIndex = 2;
             this.gGant.TabStop = false;
             this.gGant.Text = "groupBox2";
+            // 
+            // gant
+            // 
+            chartArea1.Name = "ChartArea1";
+            this.gant.ChartAreas.Add(chartArea1);
+            legend1.DockedToChartArea = "ChartArea1";
+            legend1.IsDockedInsideChartArea = false;
+            legend1.Name = "Legend1";
+            this.gant.Legends.Add(legend1);
+            this.gant.Location = new System.Drawing.Point(0, 19);
+            this.gant.Name = "gant";
+            this.gant.Size = new System.Drawing.Size(598, 237);
+            this.gant.TabIndex = 0;
+            this.gant.Text = "chart1";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(603, 458);
+            this.ClientSize = new System.Drawing.Size(603, 483);
             this.Controls.Add(this.gGant);
             this.Controls.Add(this.gStdcs);
             this.Controls.Add(this.groupBox1);
@@ -265,6 +285,8 @@
             this.gin.PerformLayout();
             this.gStdcs.ResumeLayout(false);
             this.gStdcs.PerformLayout();
+            this.gGant.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.gant)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -290,6 +312,7 @@
         private System.Windows.Forms.ListView listView1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label lblPromedio;
+        private System.Windows.Forms.DataVisualization.Charting.Chart gant;
     }
 }
 

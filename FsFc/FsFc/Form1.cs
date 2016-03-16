@@ -7,7 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Forms.DataVisualization.Charting;
 using System.Threading;
+
 
 namespace FsFc
 {
@@ -39,6 +41,7 @@ namespace FsFc
             chkDurAl.Checked = true;
             chkNombre.Checked = true;
 
+            
             // agregar elementos a la lista
             
             listView1.Columns.Add("1" ,"Nombre", listView1.Width / 3);
@@ -69,6 +72,50 @@ namespace FsFc
 
         }
 
+        private void creatGrafico ( Proceso [] vectorProc,int []tiempoEspera,int tfinal)
+        {
+            for (int i = 0; i < tiempoEspera.Length; i++)
+                MessageBox.Show(tiempoEspera[i].ToString());
+
+            // graficar el vector de procesos 
+            gant.Titles.Add("Diagrama de Gant de Procesos");
+
+            for(int i = 0; i< vectorProc.Length; i ++)
+            {
+                // agregar serie al grafico
+                Series serie = gant.Series.Add(vectorProc[i].GSnombre);
+
+                // cambiar tipo de grafico
+                serie.ChartType = SeriesChartType.Point;
+                if ( i >= 0 && i < tiempoEspera.Length - 1 )
+                {
+                    // poner puntos para cada tiempo de espera 
+                    for (int j = tiempoEspera[i]; j < tiempoEspera[i+1]; j++)
+                    {
+                        // agragar puntos al grafico
+                        serie.Points.AddXY(j,i+1);
+                    }
+                }
+                else
+                {
+                    // poner puntos para cada tiempo de espera 
+                    for (int j = vectorProc[vectorProc.Length -2].GSduracion; j < vectorProc[vectorProc.Length - 1].GSduracion; j++)
+                    {
+                        // agragar puntos al grafico
+                        serie.Points.AddXY(j, i+1);
+                    }
+
+                }
+
+
+
+
+
+
+            }
+
+           
+        }
         private void chkDurAl_CheckedChanged(object sender, EventArgs e)
         {
             this.txtDurProc.Enabled = false;
@@ -87,6 +134,7 @@ namespace FsFc
             if ( chkNombre.Checked && chkDurAl.Checked)
             {
                 Proceso[] vectProcesos = new Proceso[numerProcesos];
+                int[] tiemposEspera = new int [numerProcesos];
 
                 // iterar para cada uno de los procesos 
                 for ( int i = 0; i < vectProcesos.Length; i ++)
@@ -117,13 +165,20 @@ namespace FsFc
                     Thread.Sleep(600);
                     listView1.Refresh();
 
+                    tiemposEspera[i] = tiempoEspera;
                     tiempoProm += tiempoEspera;
                     tiempoEspera += vectProcesos[i].GSduracion;
+
+                   
                     
                
 
                 }
                 lblPromedio.Text = Convert.ToString((float) tiempoProm / vectProcesos.Length);
+
+                MessageBox.Show("Se creara el grafico");
+                // crear grafico
+                creatGrafico(vectProcesos,tiemposEspera,numerProcesos-1);
             }
 
             
