@@ -36,11 +36,12 @@ namespace FsFc
             pActual.faltate = 0;
             this.estado = 4;
         }
-        public void planificarSjf(Proceso[] colaProcesos)
+        public Proceso[] planificarSjf(Proceso[] colaProcesos)
         {
             // buscar el proceso mas corto y procesarlo hasta que termine totalmente
             // poner su duracion en 0 y su estado en 4, listo
             // volver a buscar entre todos los procesos quue no tengan estado = 4
+            Proceso[] nuevoOrden = new Proceso[colaProcesos.Length];
             while (true)
             {
                 int faltantes = 0;
@@ -53,7 +54,7 @@ namespace FsFc
                         faltantes++;
 
                 if (faltantes == 0)
-                    return;
+                    return nuevoOrden;
 
                 // buscar al mas corto de todos 
                 for (int i = 0; i < colaProcesos.Length; i++)
@@ -61,6 +62,14 @@ namespace FsFc
                     if (Aux.GSduracion > colaProcesos[i].GSduracion)
                         Aux = colaProcesos[i];
                 }
+
+                // meter al nuevo proceso en la cola de listos
+                for (int i = 0; i < colaProcesos.Length; i++)
+                {
+                    if (nuevoOrden[i] == null)
+                        nuevoOrden[i] = Aux;
+                }
+
 
                 // procesar al proceso mas corto
                 while (Aux.GSduracion >= 3)
@@ -70,11 +79,7 @@ namespace FsFc
 
                 }
                 Aux.GSestado = 4;
-
             }
-
-            
-
         }
     }
 }

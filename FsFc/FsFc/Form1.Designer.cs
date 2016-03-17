@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button2 = new System.Windows.Forms.Button();
             this.gin = new System.Windows.Forms.GroupBox();
@@ -50,6 +50,7 @@
             this.listView1 = new System.Windows.Forms.ListView();
             this.gGant = new System.Windows.Forms.GroupBox();
             this.gant = new System.Windows.Forms.DataVisualization.Charting.Chart();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.groupBox1.SuspendLayout();
             this.gin.SuspendLayout();
             this.gStdcs.SuspendLayout();
@@ -59,6 +60,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.comboBox1);
             this.groupBox1.Controls.Add(this.button2);
             this.groupBox1.Controls.Add(this.gin);
             this.groupBox1.Controls.Add(this.numeroProcesos);
@@ -185,16 +187,16 @@
             // 
             // numeroProcesos
             // 
-            this.numeroProcesos.Location = new System.Drawing.Point(6, 21);
+            this.numeroProcesos.Location = new System.Drawing.Point(99, 21);
             this.numeroProcesos.Name = "numeroProcesos";
-            this.numeroProcesos.Size = new System.Drawing.Size(109, 20);
+            this.numeroProcesos.Size = new System.Drawing.Size(42, 20);
             this.numeroProcesos.TabIndex = 1;
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(121, 19);
+            this.button1.Location = new System.Drawing.Point(147, 21);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(52, 23);
+            this.button1.Size = new System.Drawing.Size(26, 23);
             this.button1.TabIndex = 0;
             this.button1.Text = "button1";
             this.button1.UseVisualStyleBackColor = true;
@@ -256,17 +258,25 @@
             // 
             // gant
             // 
-            chartArea2.Name = "ChartArea1";
-            this.gant.ChartAreas.Add(chartArea2);
-            legend2.DockedToChartArea = "ChartArea1";
-            legend2.IsDockedInsideChartArea = false;
-            legend2.Name = "Legend1";
-            this.gant.Legends.Add(legend2);
+            chartArea1.Name = "ChartArea1";
+            this.gant.ChartAreas.Add(chartArea1);
+            legend1.DockedToChartArea = "ChartArea1";
+            legend1.IsDockedInsideChartArea = false;
+            legend1.Name = "Legend1";
+            this.gant.Legends.Add(legend1);
             this.gant.Location = new System.Drawing.Point(0, 0);
             this.gant.Name = "gant";
             this.gant.Size = new System.Drawing.Size(598, 256);
             this.gant.TabIndex = 0;
             this.gant.Text = "chart1";
+            // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(6, 21);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(87, 21);
+            this.comboBox1.TabIndex = 18;
             // 
             // Form1
             // 
@@ -313,6 +323,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label lblPromedio;
         private System.Windows.Forms.DataVisualization.Charting.Chart gant;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 

@@ -134,6 +134,7 @@ namespace FsFc
 
            
         }
+
         private void chkDurAl_CheckedChanged(object sender, EventArgs e)
         {
             this.txtDurProc.Enabled = false;
@@ -167,8 +168,22 @@ namespace FsFc
                     vectProcesos[i].GSnombre = "p" + cuenta.ToString();
                     vectProcesos[i].GSduracion = r.Next(1, 25);
 
+                    // verificar que proceso se trabaja
+
+                    switch (comboBox1.Text)
+                    {
+                        case "FcFs": pln1.planificarFcFs(vectProcesos[i]); break;
+
+                        case "SJF":
+                            vectProcesos = pln1.planificarSjf(vectProcesos);
+                        break;
+
+
+
+                    }
+
                     // procesar cada proceso del vector 
-                    pln1.planificarFcFs(vectProcesos[i]);
+                    
 
                     // agregar al list view
                     listView1.View = View.Details;
