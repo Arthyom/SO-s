@@ -178,7 +178,7 @@ namespace FsFc
                     switch (comboBox1.Text)
                     {
                         case "FcFs":
-                            pln1.planificarFcFs(vectProcesos[i]);
+                            vectProcesos = pln1.planificarFcFs(vectProcesos);
                         break;
 
                         case "SJF":

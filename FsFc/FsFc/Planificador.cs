@@ -54,44 +54,53 @@ namespace FsFc
             // poner su duracion en 0 y su estado en 4, listo
             // volver a buscar entre todos los procesos quue no tengan estado = 4
             Proceso[] nuevoOrden = new Proceso[colaProcesos.Length];
-            while (true)
+            int cont = 0;
+
+            while ( colaProcesos.Length > cont)
             {
-                int faltantes = 0;
+                //int faltantes = 0;
 
                 Proceso Aux = colaProcesos[0];
 
-                // buscar procesos sin terminar
+                /* buscar procesos sin terminar
                 foreach (Proceso p in colaProcesos)
                     if (p.GSestado != 4)
                         faltantes++;
 
                 if (faltantes == 0)
                     return nuevoOrden;
+                    */
 
                 // buscar al mas corto de todos 
-                for (int i = 0; i < colaProcesos.Length; i++)
+                int i;
+                for (i = 0; i < colaProcesos.Length; i++)
                 {
-                    if (Aux.GSduracion > colaProcesos[i].GSduracion)
+                    if (Aux.GSduracion > colaProcesos[i].GSduracion && colaProcesos[i].GSestado!= 4)
                         Aux = colaProcesos[i];
                 }
+                // buscar proceso mas corto y ponerlo a 4
+                foreach (Proceso p in colaProcesos)
+                    if (p.GSnombre == Aux.GSnombre)
+                        p.GSestado = 4;
 
-                // meter al nuevo proceso en la cola de listos
-                for (int i = 0; i < colaProcesos.Length; i++)
-                {
-                    if (nuevoOrden[i] == null)
-                        nuevoOrden[i] = Aux;
-                }
 
 
                 // procesar al proceso mas corto
-                while (Aux.GSduracion >= 3)
+                while (Aux.faltate >= 3)
                 {
                     Aux.faltate -= 3;
                     Aux.GSestado = 1;
 
                 }
                 Aux.GSestado = 4;
+                nuevoOrden[cont] = Aux;   
+                 
+                cont++;
+
+
             }
+
+            return nuevoOrden;
         }
     }
 }
