@@ -74,19 +74,37 @@ namespace FsFc
 
         private void creatGrafico ( Proceso [] vectorProc,int []tiempoEspera,int tfinal)
         {
-            for (int i = 0; i < tiempoEspera.Length; i++)
-                MessageBox.Show(tiempoEspera[i].ToString());
+            
 
             // graficar el vector de procesos 
             gant.Titles.Add("Diagrama de Gant de Procesos");
+            gant.ChartAreas["ChartArea1"].AxisY.Title = "Procesos";
+            gant.ChartAreas["ChartArea1"].AxisX.Title = "Tiempo";
+           
+           
 
-            for(int i = 0; i< vectorProc.Length; i ++)
+            for (int i = 0; i< vectorProc.Length; i ++)
             {
                 // agregar serie al grafico
                 Series serie = gant.Series.Add(vectorProc[i].GSnombre);
+                
 
                 // cambiar tipo de grafico
                 serie.ChartType = SeriesChartType.Point;
+
+                // ver si es solo 1 proceso
+                if (vectorProc.Length == 1)
+                {
+                    // poner puntos para cada tiempo de espera 
+                    for (int j = 0; j < vectorProc[i].GSduracion; j++)
+
+                        // agragar puntos al grafico
+                        serie.Points.AddXY(j, i + 1);
+                    return;
+                }
+                    
+
+
                 if ( i >= 0 && i < tiempoEspera.Length - 1 )
                 {
                     // poner puntos para cada tiempo de espera 
@@ -99,7 +117,7 @@ namespace FsFc
                 else
                 {
                     // poner puntos para cada tiempo de espera 
-                    for (int j = vectorProc[vectorProc.Length -2].GSduracion; j < vectorProc[vectorProc.Length - 1].GSduracion; j++)
+                    for (int j = tiempoEspera[tiempoEspera.Length-1]; j < (tiempoEspera[tiempoEspera.Length - 1]  + vectorProc[vectorProc.Length-1].GSduracion) ; j++)
                     {
                         // agragar puntos al grafico
                         serie.Points.AddXY(j, i+1);
@@ -142,7 +160,7 @@ namespace FsFc
                     int cuenta = i + 1;
 
                     lbProcesos.Text = "Proceso " + cuenta.ToString();
-                    Thread.Sleep(600);
+                    Thread.Sleep(400);
                     lbProcesos.Refresh();
 
                     vectProcesos[i] = new Proceso();
@@ -162,7 +180,7 @@ namespace FsFc
 
                     listView1.Items.Add(it);
 
-                    Thread.Sleep(600);
+                    Thread.Sleep(400);
                     listView1.Refresh();
 
                     tiemposEspera[i] = tiempoEspera;
@@ -174,9 +192,10 @@ namespace FsFc
                
 
                 }
-                lblPromedio.Text = Convert.ToString((float) tiempoProm / vectProcesos.Length);
+                float prom = (float)tiempoProm / vectProcesos.Length;
+                lblPromedio.Text = prom.ToString("0.00");
 
-                MessageBox.Show("Se creara el grafico");
+             
                 // crear grafico
                 creatGrafico(vectProcesos,tiemposEspera,numerProcesos-1);
             }

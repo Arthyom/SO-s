@@ -262,9 +262,9 @@
             legend1.IsDockedInsideChartArea = false;
             legend1.Name = "Legend1";
             this.gant.Legends.Add(legend1);
-            this.gant.Location = new System.Drawing.Point(0, 19);
+            this.gant.Location = new System.Drawing.Point(0, 0);
             this.gant.Name = "gant";
-            this.gant.Size = new System.Drawing.Size(598, 237);
+            this.gant.Size = new System.Drawing.Size(598, 256);
             this.gant.TabIndex = 0;
             this.gant.Text = "chart1";
             // 
