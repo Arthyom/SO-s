@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace FsFc
 {
@@ -48,59 +49,62 @@ namespace FsFc
             
         }
 
-        public Proceso[] planificarSjf(Proceso[] colaProcesos)
+        public Proceso[] planificarSJF(Proceso[] vectorProc)
         {
-            // buscar el proceso mas corto y procesarlo hasta que termine totalmente
-            // poner su duracion en 0 y su estado en 4, listo
-            // volver a buscar entre todos los procesos quue no tengan estado = 4
-            Proceso[] nuevoOrden = new Proceso[colaProcesos.Length];
-            int cont = 0;
+            // declarar una coleccion generica 
+            Proceso[] listaSalida = new Proceso[vectorProc.Length];
+            Proceso min = vectorProc[0];
 
-            while ( colaProcesos.Length > cont)
+            for ( int k = 0;  k < vectorProc.Length; k ++)
             {
-                //int faltantes = 0;
-
-                Proceso Aux = colaProcesos[0];
-
-                /* buscar procesos sin terminar
-                foreach (Proceso p in colaProcesos)
-                    if (p.GSestado != 4)
-                        faltantes++;
-
-                if (faltantes == 0)
-                    return nuevoOrden;
-                    */
-
-                // buscar al mas corto de todos 
-                int i;
-                for (i = 0; i < colaProcesos.Length; i++)
+                // buscar el minimo para cada elemtneto del vector 
+                for (int i = 0; i < vectorProc.Length; i++)
                 {
-                    if (Aux.GSduracion > colaProcesos[i].GSduracion && colaProcesos[i].GSestado!= 4)
-                        Aux = colaProcesos[i];
+                    min = vectorProc[i];
+                    // verifiar que el elemnto exista
+                    if (vectorProc[i].GSestado != 4)
+                    {
+                        // compararlo con todo el vector buscando el minimo 
+                        for (int j = 0; j < vectorProc.Length; j++)
+                        {
+                            // comparar min con V[j] siempre y cuando V[j] exista 
+                            if ((min.GSduracion > vectorProc[j].GSduracion) && vectorProc[j].GSestado != 4)
+                                min = vectorProc[j];
+                        }
+
+                        break;
+
+                    }
                 }
-                // buscar proceso mas corto y ponerlo a 4
-                foreach (Proceso p in colaProcesos)
-                    if (p.GSnombre == Aux.GSnombre)
-                        p.GSestado = 4;
 
+               
 
-
-                // procesar al proceso mas corto
-                while (Aux.faltate >= 3)
+                // buscar el elemento minimo en el vector y eliminarlo
+                for (int i = 0; i < vectorProc.Length; i++)
                 {
-                    Aux.faltate -= 3;
-                    Aux.GSestado = 1;
+                    if (vectorProc[i].GSnombre.CompareTo(min.GSnombre) == 0)
+                    {
+                        vectorProc[i].GSestado = 4;
+                        min.GSestado = 4;
+                        break;
+                    }
+                }
+
+                // procesar el proceso minimo 
+                while (min.faltate >= 3)
+                {
+                    min.faltate -= 3;
+                    min.faltate = 1;
 
                 }
-                Aux.GSestado = 4;
-                nuevoOrden[cont] = Aux;   
-                 
-                cont++;
+                min.GSestado = 4;
 
-
+                // meter proceso en el vector de listos
+                listaSalida[k] = min;
             }
-
-            return nuevoOrden;
+            return listaSalida;
         }
+
+        
     }
 }

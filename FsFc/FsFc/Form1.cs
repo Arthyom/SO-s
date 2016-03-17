@@ -182,7 +182,7 @@ namespace FsFc
                         break;
 
                         case "SJF":
-                            vectProcesos = pln1.planificarSjf(vectProcesos);
+                            vectProcesos = pln1.planificarSJF(vectProcesos);
                         break;
 
                     }
