@@ -23,19 +23,31 @@ namespace FsFc
         }
         public int rafagaCpu = 3;
 
-        public void planificarFcFs(Proceso pActual)
+        public Proceso[] planificarFcFs(Proceso [] pActual)
         {
-            // procesar hasta que el proceso termine 
-            while (pActual.faltate >= 3)
+            Proceso[] atendidos = new Proceso [ pActual.Length ];
+
+            // procesar el proceso i-esimo y ponerlo en la cola de atendidos 
+            for ( int i = 0; i < pActual.Length; i ++)
             {
-                pActual.faltate -= 3;
-                pActual.GSestado = 1;
+                Proceso pSelec = pActual[i];
+                // procesar hasta que el proceso termine 
+                while (pSelec.faltate >= 3)
+                {
+                    pSelec.faltate -= 3;
+                    pSelec.GSestado = 1;
+                }
+
+                pSelec.GSestado = 4;
+                pSelec.faltate = 0;
+                this.estado = 0;
             }
 
-            pActual.GSestado = 4;
-            pActual.faltate = 0;
-            this.estado = 4;
+            return atendidos;
+
+            
         }
+
         public Proceso[] planificarSjf(Proceso[] colaProcesos)
         {
             // buscar el proceso mas corto y procesarlo hasta que termine totalmente

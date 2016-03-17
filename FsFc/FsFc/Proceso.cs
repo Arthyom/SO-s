@@ -53,7 +53,7 @@ namespace FsFc
 
         public Proceso()
         {
-            /* 0-en espera, 1-en ejecucion 2- listo  -1- bloqueado 4-listo*/
+            /* 0-en espera, 1-ejecucion 2-listo  -1 -bloqueado 4-listo*/
             this.estado = 0;
             this.nombre = " ";
             this.duracion = 0;

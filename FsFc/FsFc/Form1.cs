@@ -48,6 +48,11 @@ namespace FsFc
             listView1.Columns.Add("2", "Duracion", listView1.Width / 3);
             listView1.Columns.Add("3","Tiempo de espera", listView1.Width / 3);
 
+
+            // fijar propiedades de la combobox
+            comboBox1.Items.Add("FsFS");
+            comboBox1.Items.Add("SJF");
+
             gGant.Text = " ";
             gin.Text = " ";
             gStdcs.Text = " ";
@@ -156,7 +161,7 @@ namespace FsFc
                 int[] tiemposEspera = new int [numerProcesos];
 
                 // iterar para cada uno de los procesos 
-                for ( int i = 0; i < vectProcesos.Length; i ++)
+                for (int i = 0; i < vectProcesos.Length; i++)
                 {
                     int cuenta = i + 1;
 
@@ -167,24 +172,25 @@ namespace FsFc
                     vectProcesos[i] = new Proceso();
                     vectProcesos[i].GSnombre = "p" + cuenta.ToString();
                     vectProcesos[i].GSduracion = r.Next(1, 25);
+                }
 
                     // verificar que proceso se trabaja
-
                     switch (comboBox1.Text)
                     {
-                        case "FcFs": pln1.planificarFcFs(vectProcesos[i]); break;
+                        case "FcFs":
+                            pln1.planificarFcFs(vectProcesos[i]);
+                        break;
 
                         case "SJF":
                             vectProcesos = pln1.planificarSjf(vectProcesos);
                         break;
 
-
-
                     }
 
-                    // procesar cada proceso del vector 
-                    
 
+                // procesar cada proceso del vector 
+                for (int i = 0; i < vectProcesos.Length; i++)
+                {
                     // agregar al list view
                     listView1.View = View.Details;
 
@@ -201,12 +207,8 @@ namespace FsFc
                     tiemposEspera[i] = tiempoEspera;
                     tiempoProm += tiempoEspera;
                     tiempoEspera += vectProcesos[i].GSduracion;
-
-                   
-                    
-               
-
                 }
+
                 float prom = (float)tiempoProm / vectProcesos.Length;
                 lblPromedio.Text = prom.ToString("0.00");
 
