@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea2 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend2 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea4 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend4 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button2 = new System.Windows.Forms.Button();
             this.gin = new System.Windows.Forms.GroupBox();
@@ -51,6 +51,7 @@
             this.gGant = new System.Windows.Forms.GroupBox();
             this.gant = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.button4 = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.gin.SuspendLayout();
             this.gStdcs.SuspendLayout();
@@ -204,6 +205,7 @@
             // 
             // gStdcs
             // 
+            this.gStdcs.Controls.Add(this.button4);
             this.gStdcs.Controls.Add(this.label4);
             this.gStdcs.Controls.Add(this.lblPromedio);
             this.gStdcs.Controls.Add(this.listView1);
@@ -217,9 +219,9 @@
             // label4
             // 
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(331, 88);
+            this.label4.Location = new System.Drawing.Point(339, 88);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(66, 16);
+            this.label4.Size = new System.Drawing.Size(67, 16);
             this.label4.TabIndex = 14;
             this.label4.Tag = "Nombre";
             this.label4.Text = "Promedio";
@@ -230,7 +232,7 @@
             this.lblPromedio.AutoSize = true;
             this.lblPromedio.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPromedio.ForeColor = System.Drawing.Color.Red;
-            this.lblPromedio.Location = new System.Drawing.Point(337, 104);
+            this.lblPromedio.Location = new System.Drawing.Point(340, 104);
             this.lblPromedio.Name = "lblPromedio";
             this.lblPromedio.Size = new System.Drawing.Size(57, 20);
             this.lblPromedio.TabIndex = 13;
@@ -258,12 +260,12 @@
             // 
             // gant
             // 
-            chartArea2.Name = "ChartArea1";
-            this.gant.ChartAreas.Add(chartArea2);
-            legend2.DockedToChartArea = "ChartArea1";
-            legend2.IsDockedInsideChartArea = false;
-            legend2.Name = "Legend1";
-            this.gant.Legends.Add(legend2);
+            chartArea4.Name = "ChartArea1";
+            this.gant.ChartAreas.Add(chartArea4);
+            legend4.DockedToChartArea = "ChartArea1";
+            legend4.IsDockedInsideChartArea = false;
+            legend4.Name = "Legend1";
+            this.gant.Legends.Add(legend4);
             this.gant.Location = new System.Drawing.Point(0, 0);
             this.gant.Name = "gant";
             this.gant.Size = new System.Drawing.Size(598, 256);
@@ -278,6 +280,16 @@
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(87, 21);
             this.comboBox1.TabIndex = 18;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(334, 195);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(78, 22);
+            this.button4.TabIndex = 18;
+            this.button4.Text = "button4";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
             // Form1
             // 
@@ -325,6 +337,7 @@
         private System.Windows.Forms.Label lblPromedio;
         private System.Windows.Forms.DataVisualization.Charting.Chart gant;
         private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Button button4;
     }
 }
 

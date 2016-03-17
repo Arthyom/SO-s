@@ -39,6 +39,8 @@ namespace FsFc
 
             chckOrdAl.Checked = true;
             chkDurAl.Checked = true;
+            button4.BackColor = Color.Red;
+            button4.Text = "Borrar";
             chkNombre.Checked = true;
 
             
@@ -233,6 +235,43 @@ namespace FsFc
         private void label3_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            // limpiar elementos 
+            foreach (Control c in this.Controls)
+            {
+                if (c is GroupBox)
+                {
+                    foreach (Control ce in c.Controls)
+                    {
+
+
+                        if (ce is TextBox)
+                            ce.Text = " ";
+                        else
+                        {
+                            if (ce is ListView)
+                            {
+                                listView1.Items.Clear();
+                            }
+                            else {
+                                if (ce is Chart)
+                                {
+                                    foreach (Series s in gant.Series)
+                                        s.Points.Clear();
+                                    gant.Series.Clear();
+                                    gant.Titles.Clear();
+
+                                }
+                            }
+                        }
+                    }  
+
+                }
+
+            }
         }
     }
 }
