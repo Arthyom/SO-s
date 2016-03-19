@@ -35,6 +35,20 @@ namespace FsFc
             }
         }
 
+        private int tiempoLLegada;
+        public  int GSTiempoLLegada
+        {
+            set
+            {
+                this.tiempoLLegada = value;
+            }
+
+            get
+            {
+                return this.tiempoLLegada;
+            }
+
+        }
 
         private int duracion;
         public int GSduracion
@@ -58,6 +72,7 @@ namespace FsFc
             this.nombre = " ";
             this.duracion = 0;
             this.faltate = 10;
+            this.tiempoLLegada = 0;
         }
 
 

@@ -159,8 +159,16 @@ namespace FsFc
             // si todo es automatico
             if ( chkNombre.Checked && chkDurAl.Checked)
             {
+                
                 Proceso[] vectProcesos = new Proceso[numerProcesos];
                 int[] tiemposEspera = new int [numerProcesos];
+                
+
+                /*
+                Proceso[] vectProcesos = new Proceso[5];
+                int[] tiemposEspera = new int[5];
+                */
+
 
                 // iterar para cada uno de los procesos 
                 for (int i = 0; i < vectProcesos.Length; i++)
@@ -173,11 +181,15 @@ namespace FsFc
 
                     vectProcesos[i] = new Proceso();
                     vectProcesos[i].GSnombre = "p" + cuenta.ToString();
-                    vectProcesos[i].GSduracion = r.Next(1, 25);
+                   // vectProcesos[i].GSduracion = r.Next(1, 25);
                 }
 
-                    // verificar que proceso se trabaja
-                    switch (comboBox1.Text)
+                vectProcesos[0].GSduracion = 3;
+                vectProcesos[1].GSduracion = 2;
+              
+
+                // verificar que proceso se trabaja
+                switch (comboBox1.Text)
                     {
                         case "FcFs":
                             vectProcesos = pln1.planificarFcFs(vectProcesos);
