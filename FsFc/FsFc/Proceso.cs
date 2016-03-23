@@ -64,6 +64,7 @@ namespace FsFc
         }
 
         public int faltate;
+        public int tEspera;
 
         public Proceso()
         {
@@ -73,6 +74,7 @@ namespace FsFc
             this.duracion = 0;
             this.faltate = 10;
             this.tiempoLLegada = 0;
+            this.tEspera = 0;
         }
 
 

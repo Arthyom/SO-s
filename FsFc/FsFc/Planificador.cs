@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Collections;
+using System.IO;
+using System.Windows.Forms;
 
 namespace FsFc
 {
@@ -24,14 +26,12 @@ namespace FsFc
         }
         public int rafagaCpu = 3;
 
-        public Proceso[] planificarFcFs(Proceso [] pActual)
+        public Proceso procesar( Proceso pActual)
         {
-            Proceso[] atendidos = new Proceso [ pActual.Length ];
+              
 
-            // procesar el proceso i-esimo y ponerlo en la cola de atendidos 
-            for ( int i = 0; i < pActual.Length; i ++)
-            {
-                Proceso pSelec = pActual[i];
+
+            Proceso pSelec = pActual;
                 // procesar hasta que el proceso termine 
                 while (pSelec.faltate >= 3)
                 {
@@ -39,10 +39,30 @@ namespace FsFc
                     pSelec.GSestado = 1;
                 }
 
+                //pSelec.tEspera = espera + 1;
                 pSelec.GSestado = 4;
                 pSelec.faltate = 0;
                 this.estado = 0;
+                //espera += pSelec.GSduracion ;
+
+            return pActual;
+        }
+
+        public Proceso[] planificarFcFs(Proceso [] pActual)
+        {
+            Proceso[] atendidos = new Proceso [ pActual.Length ];
+            int espera = 0;
+            
+
+            // procesar el proceso i-esimo y ponerlo en la cola de atendidos 
+            for (int i = 0; i < pActual.Length; i++)
+            {
+                atendidos[i] =  procesar(pActual[i]);
+
+                atendidos[i].tEspera = espera + 1;
+                espera += atendidos[i].GSduracion;
             }
+              
 
             return atendidos;
 
@@ -54,6 +74,7 @@ namespace FsFc
             // declarar una coleccion generica 
             Proceso[] listaSalida = new Proceso[vectorProc.Length];
             Proceso min = vectorProc[0];
+            int espera = 0;
 
             for ( int k = 0;  k < vectorProc.Length; k ++)
             {
@@ -73,7 +94,6 @@ namespace FsFc
                         }
 
                         break;
-
                     }
                 }
 
@@ -89,22 +109,60 @@ namespace FsFc
                         break;
                     }
                 }
-
-                // procesar el proceso minimo 
-                while (min.faltate >= 3)
-                {
-                    min.faltate -= 3;
-                    min.faltate = 1;
-
-                }
-                min.GSestado = 4;
-
-                // meter proceso en el vector de listos
-                listaSalida[k] = min;
+             
+                listaSalida[k] = procesar(min);
+                listaSalida[k].tEspera = espera + 1;
+                espera += listaSalida[k].GSduracion;
             }
             return listaSalida;
         }
 
-        
+        public void leerArchivo( Proceso [] vectorProceso)
+        {
+            // leer procesos en el archivo
+
+            // crear un lector de archivo 
+            string rutaArchivo = @"C:\Users\frodo\Desktop\procesos.txt";
+            StreamReader lector = new StreamReader(rutaArchivo);
+
+            // leer dato del archivo de text linea a linea 
+            string linea;
+            int[] indxEspacios = new int [3];
+
+            string nombre;
+            int duracion;
+            int inicio;
+            int j = 0;
+            int k = 0;
+            // desplazar la primera linea 
+            lector.ReadLine();
+            while ( k < vectorProceso.Length )
+            {
+                linea = lector.ReadLine();
+                j = 0;
+                // buscar espacios 
+                for (int i = 0; i < linea.Length; i++)
+                {
+                    if (linea[i] == ' ')
+                    {
+                        indxEspacios[j] = i;
+                        j += 1;
+                    }
+
+                }
+
+                nombre = linea.Substring(0, indxEspacios[0]);
+                inicio = Convert.ToInt16( linea.Substring(indxEspacios[0] + 1, ( indxEspacios[1] - indxEspacios[0] ) -1 ) );
+                duracion = Convert.ToInt16(linea.Substring(indxEspacios[1]));
+
+                /// meter al vector
+                vectorProceso[k].GSnombre = nombre;
+                vectorProceso[k].GSduracion = duracion;
+                vectorProceso[k].GSTiempoLLegada = inicio;
+                k++;
+            }
+
+            lector.Close();
+        } 
     }
 }
