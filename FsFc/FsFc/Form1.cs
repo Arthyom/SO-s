@@ -38,11 +38,14 @@ namespace FsFc
             
             // agregar elementos a la lista
             
-            listView1.Columns.Add("1" ,"Nombre", listView1.Width / 4);
-            listView1.Columns.Add("2", "T LLegada", listView1.Width / 4);
-            listView1.Columns.Add("3", "Duracion", listView1.Width /4);            
-            listView1.Columns.Add("4","T Espera", listView1.Width / 4);
-            
+            listView1.Columns.Add("1" ,"Nombre", listView1.Width / 7);
+            listView1.Columns.Add("2", "To", listView1.Width / 7);
+            listView1.Columns.Add("3", "Duracion", listView1.Width /7);            
+            listView1.Columns.Add("4","Ti", listView1.Width / 7);
+            listView1.Columns.Add("5", "Tf", listView1.Width / 7);
+            listView1.Columns.Add("6", "Tr", listView1.Width / 7);
+            listView1.Columns.Add("7", "Te", listView1.Width / 7);
+
 
             // fijar propiedades de la combobox
             comboBox1.Items.Add("FcFs");
@@ -153,10 +156,17 @@ namespace FsFc
                     listView1.View = View.Details;
 
                     ListViewItem it = new ListViewItem(vectProcesos[i].GSnombre);
-         
                     it.SubItems.Add(vectProcesos[i].GSTiempoLLegada.ToString());
                     it.SubItems.Add(vectProcesos[i].GSduracion.ToString());
-                    it.SubItems.Add(vectProcesos[i].tEspera.ToString() );
+                    it.SubItems.Add(vectProcesos[i].Tinicio.ToString());
+                    it.SubItems.Add(vectProcesos[i].Tfinal.ToString());
+                    it.SubItems.Add(vectProcesos[i].Tretorno.ToString());
+                    it.SubItems.Add(vectProcesos[i].tEspera.ToString());
+
+
+                    // tiempo inicio, tiempo final, tiempo retorno, tiempo espera
+
+
 
 
                     listView1.Items.Add(it);
@@ -173,6 +183,7 @@ namespace FsFc
 
                 // crear grafico
                 creatGrafico(vectProcesos);
+                lectr.Close();
             }
 
             

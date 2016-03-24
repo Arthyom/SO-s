@@ -26,7 +26,7 @@ namespace FsFc
         }
         public int rafagaCpu = 3;
 
-        public Proceso procesar( Proceso pActual)
+        public Proceso procesar( Proceso pActual, int espera )
         {
               
 
@@ -43,7 +43,15 @@ namespace FsFc
                 pSelec.GSestado = 4;
                 pSelec.faltate = 0;
                 this.estado = 0;
-                //espera += pSelec.GSduracion ;
+            //espera += pSelec.GSduracion ;
+
+            pActual.Tinicio = espera ;
+            pActual.Tfinal = (pActual.GSduracion + pActual.Tinicio);
+
+            pActual.tEspera = (pActual.Tinicio - pActual.GSTiempoLLegada)  ;
+            pActual.Tfinal -= 1;
+            
+            espera += (pActual.GSduracion)-1;
 
             return pActual;
         }
@@ -51,16 +59,14 @@ namespace FsFc
         public Proceso[] planificarFcFs(Proceso [] pActual)
         {
             Proceso[] atendidos = new Proceso [ pActual.Length ];
-            int espera = 0;
+            int espera = 1;
             
 
             // procesar el proceso i-esimo y ponerlo en la cola de atendidos 
             for (int i = 0; i < pActual.Length; i++)
             {
-                atendidos[i] =  procesar(pActual[i]);
-
-                atendidos[i].tEspera = espera + 1;
-                espera += atendidos[i].GSduracion;
+                atendidos[i] =  procesar(pActual[i],espera);
+                espera += atendidos[i].GSduracion ;
             }
               
 
@@ -74,9 +80,9 @@ namespace FsFc
             // declarar una coleccion generica 
             Proceso[] listaSalida = new Proceso[vectorProc.Length];
             Proceso min = vectorProc[0];
-            int espera = 0;
+            int espera = 1;
 
-            for ( int k = 0;  k < vectorProc.Length; k ++)
+            for ( int k = 0; k < vectorProc.Length; k++)
             {
                 // buscar el minimo para cada elemtneto del vector 
                 for (int i = 0; i < vectorProc.Length; i++)
@@ -110,8 +116,7 @@ namespace FsFc
                     }
                 }
              
-                listaSalida[k] = procesar(min);
-                listaSalida[k].tEspera = espera + 1;
+                listaSalida[k] = procesar(min,espera);
                 espera += listaSalida[k].GSduracion;
             }
             return listaSalida;
