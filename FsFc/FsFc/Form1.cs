@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using System.Threading;
 using System.IO;
+using System.Collections;
 
 namespace FsFc
 {
@@ -25,7 +26,12 @@ namespace FsFc
 
         private void Form1_Load(object sender, EventArgs e)
         {
-          
+
+            gant.Titles.Add("Diagrama de Gant de Procesos");
+            gant.ChartAreas["ChartArea1"].AxisY.Title = "Procesos";
+            gant.ChartAreas["ChartArea1"].AxisX.Title = "Tiempo";
+            
+
             this.button2.Text = "Procesar";
            
             
@@ -74,14 +80,24 @@ namespace FsFc
 
         }
 
+        private void Graficar ( Proceso ProcesoListo, int Yvalue, int acumulado)
+        {
+            // crear series 
+            Series serie = gant.Series.Add(ProcesoListo.GSnombre);
+            serie.ChartType = SeriesChartType.Point;
+
+            for (int i = acumulado+1; i <= ProcesoListo.GSduracion + acumulado; i++)
+                serie.Points.AddXY(i, Yvalue);
+
+
+        }
+
         private void creatGrafico ( Proceso [] vectorProc )
         {
             
 
             // graficar el vector de procesos 
-            gant.Titles.Add("Diagrama de Gant de Procesos");
-            gant.ChartAreas["ChartArea1"].AxisY.Title = "Procesos";
-            gant.ChartAreas["ChartArea1"].AxisX.Title = "Tiempo";
+      
 
             int acumulado = 0;
             int anterior = 0;
@@ -112,80 +128,86 @@ namespace FsFc
         private void button2_Click(object sender, EventArgs e)
         {
 
+
+
             string ruta = @"C:\Users\frodo\Desktop\procesos.txt";
             StreamReader lectr = new StreamReader(ruta);
-            int num = Convert.ToInt16(lectr.ReadLine());
-            int numerProcesos = num;
-            int tiempoEspera = 0;
-            int tiempoProm = 0;
-            Random r = new Random();
-            Planificador pln1 = new Planificador();
+            int numProc = Convert.ToInt16(lectr.ReadLine());
           
+            // cola de usados 
+            Queue usados = new Queue(numProc);
 
+            // crear vector de procesos 
+            Proceso[] vectProc = new Proceso[numProc];
+            for (int i = 0; i < vectProc.Length; i++)
+                vectProc[i] = new Proceso();
 
-            // si todo es automatico
-            if ( true  )
+            // crear cola de procesos 
+            Queue colaProc = new Queue(numProc);
+
+            // crear un planificador 
+            Planificador plnfcdr1 = new Planificador();
+
+            // leer archivos y meterlos en el vector
+            plnfcdr1.leerArchivo(vectProc);
+            int llegada = vectProc[0].GSTiempoLLegada;
+            lectr.Close();
+
+            // decidir segund el algoritmo de planificacion
+            switch (this.comboBox1.Text)
             {
-                
-                Proceso[] vectProcesos = new Proceso[numerProcesos];
-                for (int i = 0; i < vectProcesos.Length; i++)
-                    vectProcesos[i] = new Proceso();
-                int[] tiemposEspera = new int [numerProcesos];
 
+                case "SJF":
+                    int espera = 0;
+                    int Tinicio = 1;
+                    int Tfinal = 1;
+                    int yValue = 1;
+                    int cont = 0;
+                    while ( cont < numProc  )
+                     {
+                        Proceso Procesado = plnfcdr1.PlanificarSJF(colaProc, vectProc, Tinicio,Tfinal, espera);
+                        if (Procesado != null)
+                        {
+                            Graficar(Procesado, yValue, espera);
+                            Tinicio += Procesado.GSTiempoLLegada;
+                            Tfinal += Procesado.GSduracion;
+                            espera += Procesado.GSduracion;
 
-                // leer datos de archivo de texto
-                pln1.leerArchivo(vectProcesos);
+                            yValue++;
+                            cont++;
 
-                // verificar que proceso se trabaja
-                switch (comboBox1.Text)
+                        }
+                        Tfinal++; 
+                      }                      
+                break;
+
+                case "FcFs":
+                    espera = 0;
+                    yValue = 1;
+                    espera = 0;
+                    foreach(Proceso p in vectProc)
                     {
-                        case "FcFs":
-                            vectProcesos = pln1.planificarFcFs(vectProcesos);
-                        break;
+                        colaProc.Enqueue(p);
+                        Proceso elegido = (Proceso) colaProc.Peek();
+                        colaProc.Dequeue();
+                        Proceso Procesado = plnfcdr1.procesar(elegido, espera);
+                        Graficar(Procesado, yValue, espera);
+                        espera += Procesado.GSduracion;
+                        yValue++;
 
-                        case "SJF":
-                            vectProcesos = pln1.planificarSJF(vectProcesos);
-                        break;
                     }
-
-
-                //dar salida a la gui
-                for (int i = 0; i < vectProcesos.Length; i++)
-                {
-                    // agregar al list view
-                    listView1.View = View.Details;
-
-                    ListViewItem it = new ListViewItem(vectProcesos[i].GSnombre);
-                    it.SubItems.Add(vectProcesos[i].GSTiempoLLegada.ToString());
-                    it.SubItems.Add(vectProcesos[i].GSduracion.ToString());
-                    it.SubItems.Add(vectProcesos[i].Tinicio.ToString());
-                    it.SubItems.Add(vectProcesos[i].Tfinal.ToString());
-                    it.SubItems.Add(vectProcesos[i].Tretorno.ToString());
-                    it.SubItems.Add(vectProcesos[i].tEspera.ToString());
-
-
-                    // tiempo inicio, tiempo final, tiempo retorno, tiempo espera
-
-
-
-
-                    listView1.Items.Add(it);
-
-                    Thread.Sleep(400);
-                    listView1.Refresh();
-
-                    // conseguir tiempo promedio
-                    tiempoProm += vectProcesos[i].tEspera;
-                }
-
-                float prom = (float)tiempoProm / vectProcesos.Length;
-                lblPromedio.Text = prom.ToString("0.00");
-
-                // crear grafico
-                creatGrafico(vectProcesos);
-                lectr.Close();
+                    break;
             }
 
+
+
+
+
+
+       
+
+
+                
             
         }
 

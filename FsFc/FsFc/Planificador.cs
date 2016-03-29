@@ -26,6 +26,56 @@ namespace FsFc
         }
         public int rafagaCpu = 3;
 
+        // buscar al proceso mas corto en una cola de procesos
+        public Proceso BuscarMenor ( Queue ColaProcesos )
+        {
+
+            if ( ColaProcesos.Count > 0)
+            {
+                Proceso procesoMenor = (Proceso)ColaProcesos.Peek();
+
+                while (procesoMenor.GSestado == 4)
+                {
+                    procesoMenor =(Proceso) ColaProcesos.Peek();
+                    if (procesoMenor.GSestado == 4)
+                        ColaProcesos.Dequeue();
+
+                }
+                   
+
+
+                if ( ColaProcesos.Count > 0)
+                    procesoMenor = (Proceso)ColaProcesos.Peek();
+
+                // iterar para cada elemento de la cola 
+                foreach (Proceso p in ColaProcesos)
+                {
+                    if (p.GSduracion < procesoMenor.GSduracion && p.GSestado != 4)
+                        procesoMenor = p;
+                }
+
+                return procesoMenor;
+            }
+            return null;
+            
+        }
+
+        // encolar un intervalo 
+        public void EncolarIntervalor ( Queue ColaProc, int Tinicio,int Tfin, Proceso [] VectorProc)
+        {
+            // encolar un intervalo de procesos y regresarlo por referencia
+            foreach( Proceso p in VectorProc)
+            {
+                if (ColaProc.Contains(p)) continue;
+
+                if ( p.GSTiempoLLegada >= Tinicio && p.GSTiempoLLegada <= Tfin && p.GSestado != 4)
+                    ColaProc.Enqueue(p);
+            }
+
+        }
+
+        
+
         public Proceso procesar( Proceso pActual, int espera )
         {
               
@@ -75,7 +125,7 @@ namespace FsFc
             
         }
 
-        public Proceso[] planificarSJF(Proceso[] vectorProc)
+        public Proceso[] PlanificarSJF(Proceso[] vectorProc)
         {
             // declarar una coleccion generica 
             Proceso[] listaSalida = new Proceso[vectorProc.Length];
@@ -169,5 +219,48 @@ namespace FsFc
 
             lector.Close();
         } 
+
+        public Queue EliminarProc ( Proceso ProcesoDelete, Queue ColaProcesos)
+        {
+            // buscar en cada proceso en la cola y eliminarlo
+            Queue ColaCopia = new Queue(ColaProcesos.Count);
+            foreach ( Proceso p in ColaProcesos)
+            {
+                if (p.GSnombre.CompareTo(ProcesoDelete.GSnombre) != 0)
+                    ColaCopia.Enqueue(p);
+            }
+            return ColaCopia;
+        }
+
+        public Proceso PlanificarSJF ( Queue ColaProc, Proceso [] VectorProc, int TInicio, int TFinal, int TEspera)
+        {
+
+            // planificar con sjf 
+            while (true)
+            {
+                // buscar procesos en un intervalo indicado  y encolarlos 
+               this.EncolarIntervalor(ColaProc, TInicio , TFinal, VectorProc);
+
+                // buscar al proceso menor en la cola 
+                Proceso Menor = this.BuscarMenor(ColaProc);
+                if (Menor != null)
+                {
+                    // procesar al menor y aumentar el rango de duracion
+                    this.procesar(Menor, TEspera);
+
+                    // eliminar el proceso de la cola 
+                    ColaProc = this.EliminarProc(Menor, ColaProc);
+
+
+                    return Menor;
+                }
+                return null;
+
+                
+                
+            }
+        }
     }
+
+    
 }
