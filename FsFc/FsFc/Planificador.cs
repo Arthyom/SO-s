@@ -24,7 +24,18 @@ namespace FsFc
                 return this.estado;
             }
         }
+
         public int rafagaCpu = 3;
+
+        // conseguir las estadisticas de la cola 
+        public float GetStdstcs ( Queue ColaProceso, int NumProc )
+        {
+            int TProm = 0;
+            foreach (Proceso p in ColaProceso)
+                TProm += p.tEspera;
+
+            return TProm / NumProc;
+        }
 
         // buscar al proceso mas corto en una cola de procesos
         public Proceso BuscarMenor ( Queue ColaProcesos )
@@ -73,14 +84,10 @@ namespace FsFc
             }
 
         }
-
         
-
+        // procesar un proceso hasta que se acabe
         public Proceso procesar( Proceso pActual, int espera )
         {
-              
-
-
             Proceso pSelec = pActual;
                 // procesar hasta que el proceso termine 
                 while (pSelec.faltate >= 3)
@@ -260,6 +267,16 @@ namespace FsFc
                 
             }
         }
+
+        // planificar con algoritmo FsFc
+        public Proceso PlanificarFcFs ( Queue ColaProc, int TEspera  )
+        {
+            Proceso elegido = (Proceso)ColaProc.Peek();
+            ColaProc.Dequeue();
+            Proceso Procesado = this.procesar(elegido, TEspera );
+            return Procesado;
+        }
+
     }
 
     

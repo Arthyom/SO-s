@@ -80,6 +80,14 @@ namespace FsFc
 
         }
 
+        // mostrar dentro del listView
+        private void display ( Proceso Procesado)
+        {
+            
+            
+            
+        }
+
         private void Graficar ( Proceso ProcesoListo, int Yvalue, int acumulado)
         {
             // crear series 
@@ -127,9 +135,6 @@ namespace FsFc
 
         private void button2_Click(object sender, EventArgs e)
         {
-
-
-
             string ruta = @"C:\Users\frodo\Desktop\procesos.txt";
             StreamReader lectr = new StreamReader(ruta);
             int numProc = Convert.ToInt16(lectr.ReadLine());
@@ -144,6 +149,7 @@ namespace FsFc
 
             // crear cola de procesos 
             Queue colaProc = new Queue(numProc);
+            Queue colaCop = new Queue(numProc);
 
             // crear un planificador 
             Planificador plnfcdr1 = new Planificador();
@@ -166,6 +172,7 @@ namespace FsFc
                     while ( cont < numProc  )
                      {
                         Proceso Procesado = plnfcdr1.PlanificarSJF(colaProc, vectProc, Tinicio,Tfinal, espera);
+                        colaCop.Enqueue(Procesado);
                         if (Procesado != null)
                         {
                             Graficar(Procesado, yValue, espera);
@@ -188,16 +195,19 @@ namespace FsFc
                     foreach(Proceso p in vectProc)
                     {
                         colaProc.Enqueue(p);
-                        Proceso elegido = (Proceso) colaProc.Peek();
-                        colaProc.Dequeue();
-                        Proceso Procesado = plnfcdr1.procesar(elegido, espera);
+                        Proceso Procesado = plnfcdr1.PlanificarFcFs(colaProc, espera);
+                        colaCop.Enqueue(Procesado);
                         Graficar(Procesado, yValue, espera);
-                        espera += Procesado.GSduracion;
+                        espera += Procesado.GSduracion +1 ;
                         yValue++;
-
                     }
+
+
                     break;
             }
+
+            // poner el tiempo promedio en la etiqeta
+            this.lblPromedio.Text = Convert.ToString( plnfcdr1.GetStdstcs(colaCop, numProc) );
 
 
 
@@ -262,5 +272,8 @@ namespace FsFc
 
             }
         }
+
+
+
     }
 }
