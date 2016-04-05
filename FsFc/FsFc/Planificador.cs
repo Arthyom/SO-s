@@ -179,12 +179,12 @@ namespace FsFc
             return listaSalida;
         }
 
-        public void leerArchivo( Proceso [] vectorProceso)
+        public void leerArchivo( Proceso [] vectorProceso,string ruta)
         {
             // leer procesos en el archivo
 
             // crear un lector de archivo 
-            string rutaArchivo = @"C:\Users\frodo\Desktop\procesos.txt";
+            string rutaArchivo = ruta;
             StreamReader lector = new StreamReader(rutaArchivo);
 
             // leer dato del archivo de text linea a linea 

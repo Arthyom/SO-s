@@ -24,6 +24,8 @@ namespace FsFc
             InitializeComponent();
         }
 
+        string ruta;
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
@@ -135,7 +137,7 @@ namespace FsFc
 
         private void button2_Click(object sender, EventArgs e)
         {
-            string ruta = @"C:\Users\frodo\Desktop\procesos.txt";
+            string ruta = this.ruta;
             StreamReader lectr = new StreamReader(ruta);
             int numProc = Convert.ToInt16(lectr.ReadLine());
           
@@ -155,7 +157,7 @@ namespace FsFc
             Planificador plnfcdr1 = new Planificador();
 
             // leer archivos y meterlos en el vector
-            plnfcdr1.leerArchivo(vectProc);
+            plnfcdr1.leerArchivo(vectProc,ruta);
             int llegada = vectProc[0].GSTiempoLLegada;
             lectr.Close();
 
@@ -239,6 +241,7 @@ namespace FsFc
         private void button4_Click(object sender, EventArgs e)
         {
             // limpiar elementos 
+            this.listView2.Clear();
             foreach (Control c in this.Controls)
             {
                 if (c is GroupBox)
@@ -273,7 +276,9 @@ namespace FsFc
             }
         }
 
+        private void button1_Click_1(object sender, EventArgs e)
+        {
 
-
+        }
     }
 }
