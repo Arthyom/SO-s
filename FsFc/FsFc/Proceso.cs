@@ -76,7 +76,9 @@ namespace FsFc
             this.estado = 0;
             this.nombre = " ";
             this.duracion = 0;
-            this.faltate = 10;
+
+            int d = this.duracion;
+            this.faltate = d;
             this.tiempoLLegada = 0;
             this.tEspera = 0;
             Tfinal = 0;

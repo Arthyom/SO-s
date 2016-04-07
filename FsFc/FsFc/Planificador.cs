@@ -13,6 +13,9 @@ namespace FsFc
     {
         /* 1 ocupado, 0 libre */
         private int estado;
+
+        public string[,] gant;
+
         public int GSestado
         {
             set
@@ -34,7 +37,7 @@ namespace FsFc
             foreach (Proceso p in ColaProceso)
                 TProm += p.tEspera;
 
-            return TProm / NumProc;
+            return (float) TProm / NumProc;
         }
 
         // buscar al proceso mas corto en una cola de procesos
@@ -103,12 +106,13 @@ namespace FsFc
             //espera += pSelec.GSduracion ;
 
             pActual.Tinicio = espera ;
-            pActual.Tfinal = (pActual.GSduracion + pActual.Tinicio);
+            pActual.Tfinal = (pActual.GSduracion + pActual.Tinicio)  -1;
 
-            pActual.tEspera = (pActual.Tinicio - pActual.GSTiempoLLegada)  ;
-            pActual.Tfinal -= 1;
+            pActual.tEspera = pActual.Tinicio -  ( pActual.GSTiempoLLegada -1 )  ;
+            pActual.tEspera -= 1;
+            pActual.Tretorno =  pActual.Tfinal - (pActual.GSTiempoLLegada - 1) ; ;
             
-            espera += (pActual.GSduracion)-1;
+            espera += (pActual.GSduracion) ;
 
             return pActual;
         }
@@ -131,6 +135,21 @@ namespace FsFc
 
             
         }
+
+        // generar un gant alterno con la caja de texto 
+        public  void GantAlterno ( Proceso Procesado, int NumProc, int Maximo, int ProcesoIesimo )
+        {
+            // meter el proceso en el gant 
+            for (int j = Procesado.GSTiempoLLegada; j <= Procesado.Tfinal; j++)
+            {
+                // graficar E's
+                if (j < Procesado.Tinicio)
+                    this.gant[ProcesoIesimo, j] = "-";
+                else
+                    this.gant[ProcesoIesimo, j] = "X";
+            }
+        }
+
 
         public Proceso[] PlanificarSJF(Proceso[] vectorProc)
         {
@@ -179,13 +198,13 @@ namespace FsFc
             return listaSalida;
         }
 
-        public void leerArchivo( Proceso [] vectorProceso,string ruta)
+        public static void leerArchivo( Proceso [] vectorProceso,string ruta)
         {
             // leer procesos en el archivo
 
             // crear un lector de archivo 
-            string rutaArchivo = ruta;
-            StreamReader lector = new StreamReader(rutaArchivo);
+           
+            StreamReader lector = new StreamReader(ruta);
 
             // leer dato del archivo de text linea a linea 
             string linea;
@@ -220,6 +239,7 @@ namespace FsFc
                 /// meter al vector
                 vectorProceso[k].GSnombre = nombre;
                 vectorProceso[k].GSduracion = duracion;
+                vectorProceso[k].faltate = duracion;
                 vectorProceso[k].GSTiempoLLegada = inicio;
                 k++;
             }
@@ -277,6 +297,262 @@ namespace FsFc
             return Procesado;
         }
 
+        public Proceso MenorEnTiempo(Queue ColaPro,  Proceso ProcesoActual, int Tiempo)
+        {
+            if (ColaPro.Count == 0)
+                return null;
+
+            // crear una cola para los procesos en el tiempo T
+            Queue ColaAlterna = new Queue();
+
+            // meter procesos en la cola alterna, para el tiempo T
+            foreach (Proceso p in ColaPro)
+                if (p.GSTiempoLLegada >= Tiempo && p.GSTiempoLLegada <= Tiempo)
+                    ColaAlterna.Enqueue(p);
+
+            // buscar un proceso mas pequeño que p
+            Proceso Menor = this.BuscarMenor(ColaAlterna);
+
+            if (ProcesoActual.GSduracion > Menor.GSduracion)
+                return Menor;
+
+            return null;
+
+        }
+
+        /*
+        public void PlanificarSJFX ( Queue ColaProc, int Tiempo)
+        {
+
+            // obtener las dimencioes del gant 
+            int DimsGant = 0;
+            int proc = ColaProc.Count;
+            foreach (Proceso p in ColaProc)
+                DimsGant += p.GSTiempoLLegada;
+
+            // dimencionar el gant
+            this.gant = new string[ColaProc.Count,DimsGant+1];
+
+            // iterar para cada linea del gant 
+            for ( int i = 0; i < DimsGant; i ++)
+            {
+                for ( int j = 0; j <= DimsGant;  j ++ )
+                {
+                    Proceso actual = (Proceso)ColaProc.Peek();
+
+                    // coneguir al proceso mas corto en el tiempo T
+                    Proceso menor = this.MenorEnTiempo(ColaProc, actual, Tiempo);
+
+                    // si se ha encontrado un proceso mas corto
+                    if (menor != null)
+                    {
+                        MessageBox.Show("se ha encontrado un proceso mas corto"+menor.GSnombre);
+                    }
+                    else
+                    {
+                        // llenar el gant, no se ha encontrado ningun proceso mas corto
+                        MessageBox.Show("ejecutando" + actual.GSnombre);
+                        this.gant[i, Tiempo] = "X";
+                        actual.GSduracion -= 1;
+
+                        if (actual.GSduracion < 0)
+                            ColaProc.Dequeue();
+
+             
+
+                    }
+                    Tiempo++;
+                }
+               
+
+            }
+
+            for (int i = 0; i < proc; i++)
+                for( int j = 0; j < DimsGant; j ++)
+                MessageBox.Show(this.gant[i,j].ToString());
+            
+        }
+        */
+
+        public Proceso MenorEnTiempo( ArrayList ListaEntrada, int Tiempo)
+        {
+            ArrayList ListaAlterna = new ArrayList();
+
+            foreach (Proceso p in ListaEntrada)
+                if (p.GSTiempoLLegada >= 1 && p.GSTiempoLLegada <= Tiempo)
+                    ListaAlterna.Add(p);
+
+            // buscar al proceso mas corto en la lista
+            Proceso ProcesoMenor = (Proceso)ListaAlterna[0];
+            foreach (Proceso p in ListaAlterna)
+                if (p.GSduracion < ProcesoMenor.GSduracion)
+                    ProcesoMenor = p;
+
+            return ProcesoMenor;
+        }
+
+        public Queue PlanificarSJFX ( ArrayList ListaEntrada)
+        {
+            int tiempo = 1;
+
+            Queue colaListo = new Queue();
+            ArrayList ListaEstatica = new ArrayList();
+
+            foreach (Proceso p in ListaEntrada)
+                ListaEstatica.Add(p);
+ 
+            while( ListaEntrada.Count > 0)
+            {
+                // conseguir al proces mas corto para el tiempo T
+                Proceso Menor = this.MenorEnTiempo(ListaEntrada, tiempo);
+
+                // meter en el gant
+                this.PushGant(Menor, this.ConvertIndx(Menor, ListaEstatica), tiempo);
+
+                // simular la ejecucion del proceso
+                Menor.GSduracion -= 1;
+                //Menor.faltate -= 1;
+                Menor.GSestado = 1;
+
+                if( Menor.Tinicio == 0)
+                {
+                    Menor.Tinicio = tiempo ;
+                }
+
+                // quitar al proceso cuando halla terminado
+                if (Menor.GSduracion <= 0)
+                {
+
+                    Menor.Tfinal = tiempo;
+                    ListaEntrada.Remove(Menor);
+                    //Menor.tEspera = this.ContarEs(this.ConvertIndx(Menor, ListaEstatica), tiempo);
+                    Menor.GSestado = 4;
+                    // Menor.GSduracion = duracion;
+                    Menor.GSduracion = Menor.faltate;
+                    colaListo.Enqueue(Menor);
+                    
+
+                }
+                tiempo++;
+            }
+
+        
+            foreach (Proceso p in colaListo)
+            {
+
+             
+                p.tEspera = this.ContarEs(this.ConvertIndx(p, ListaEstatica), tiempo-1);
+                p.Tretorno = this.ContarTodo(this.ConvertIndx(p, ListaEstatica), tiempo);
+                
+            }
+                
+
+            return colaListo;
+        }
+         
+        public void LLenarGant ( Proceso Procesado, int Iesimo, int MaxVertil )
+        {
+            // llenar la fila [Iesima,j] del gant 
+
+            for (int j = 0; j <= MaxVertil; j++)
+            {
+                if (j < Procesado.GSTiempoLLegada)
+                    this.gant[Iesimo, j] = "-";
+                else
+                    if (j < Procesado.Tinicio)
+                    this.gant[Iesimo, j] = "E";
+                else
+                    if (j >= Procesado.Tinicio && j <= Procesado.Tfinal)
+                    this.gant[Iesimo, j] = "X";
+            }
+        }
+
+        public void  PushGant (Proceso Procesado, int Iesimo, int Thrzntl)
+        {
+            if(Thrzntl >= Procesado.Tinicio)
+            {
+                this.gant[Iesimo, Thrzntl] = "x";
+                for (int j = Thrzntl; j > 0; j--)
+                    if (this.gant[Iesimo, j] != "x")
+                        this.gant[Iesimo, j] = "E"; 
+            }
+                
+
+            for (int j = 0; j < Thrzntl; j++)
+                if (Procesado.GSTiempoLLegada > j)
+                    this.gant[Iesimo, j] = "-";
+                else
+                    if (Procesado.Tinicio > j)
+                    this.gant[Iesimo, j] = "E";
+      
+        }
+
+        public void ImprimirGantTxt ( StreamWriter Escritor, int Columnas, int Filas, Proceso [] VectorProc )
+        {
+            // imprimir el gant en un archivo de texto
+            //StreamWriter Escritor = new StreamWriter(@"C: \Users\frodo\Desktop\Planificacion\GantAlterno.txt");
+
+            // escribir con formato
+            for ( int i = 0; i < Columnas; i ++)
+            {
+                for ( int j = 0; j <= Filas; j ++)
+                    Escritor.Write(this.gant[i, j]);
+
+                Escritor.Write(" ");
+                Escritor.WriteLine(VectorProc[i].GSnombre);
+                
+
+            }
+           
+        }
+
+        // regresar el indice Iesimo asociado al proceso de entrada en relacion con la coleccion de entrada
+        public int  ConvertIndx ( Proceso ProcesoEntrada, ArrayList ListaEntrada )
+        {
+            int indx = 0;
+            foreach(Proceso p in ListaEntrada)
+            {
+                // comparar todos los procesos hasta encontrar el proceso de entrada 
+                if ( string.Compare(ProcesoEntrada.GSnombre, p.GSnombre) ==  0)
+                {
+                    return indx;
+                }
+                indx++;
+            }
+            return -1;
+        }
+
+        public void InicarGant( int MaximoH, int MaximoV)
+        {
+            for (int i = 0; i < MaximoH; i++)
+                for (int j = 0; j < MaximoV; j++)
+                    this.gant[i, j] = " ";
+        }
+  
+        public int ContarEs ( int Iesimo, int Tiempo)
+        {
+            int es = 0;
+            for (int j = 0; j < Tiempo; j++)
+            {
+                string car = this.gant[Iesimo, j];
+                string e = "E";
+                if ( string.Compare(car,e) == 0 )
+                    es++;
+
+            }
+               
+            return es;
+        }
+
+        public int ContarTodo ( int Iesimo, int Tiempo)
+        {
+            int retorno = 0;
+            // contar todo Exepto #
+            for (int j = 0; j < Tiempo; j++)
+                if (this.gant[Iesimo, j] != " " && this.gant[Iesimo, j] != "-")
+                    retorno++;
+            return retorno;
+        }
     }
 
     

@@ -55,13 +55,25 @@ namespace FsFc
             listView1.Columns.Add("7", "Te", listView1.Width / 7);
 
 
+            listView2.Columns.Add("0", "Nombre", listView2.Width / 3);
+            listView2.Columns.Add("0", "To", listView2.Width / 3);
+            listView2.Columns.Add("0", "Duracion", listView2.Width / 3);
+
+
+
             // fijar propiedades de la combobox
             comboBox1.Items.Add("FcFs");
             comboBox1.Items.Add("SJF");
+            comboBox1.Items.Add("SJFX");
 
             gGant.Text = " ";
            // gin.Text = " ";
             gStdcs.Text = " ";
+
+            this.lnomb.Text = " ";
+
+            this.button1.BackColor = Color.Green;
+            this.listView2.BackColor = Color.DarkGray;
             
             
 
@@ -85,7 +97,17 @@ namespace FsFc
         // mostrar dentro del listView
         private void display ( Proceso Procesado)
         {
-            
+
+            ListViewItem it = new ListViewItem(Procesado.GSnombre);
+            it.SubItems.Add(Procesado.GSTiempoLLegada.ToString());
+            it.SubItems.Add(Procesado.GSduracion.ToString());
+            it.SubItems.Add(Procesado.Tinicio.ToString());
+            it.SubItems.Add(Procesado.Tfinal.ToString());
+            it.SubItems.Add(Procesado.Tretorno.ToString());
+            it.SubItems.Add(Procesado.tEspera.ToString());
+
+            listView1.Items.Add(it);
+            listView1.Refresh();
             
             
         }
@@ -101,6 +123,19 @@ namespace FsFc
 
 
         }
+
+        private void GraficarProceso(Proceso ProcesoListo, int Yvalue, int inicio)
+        {
+            // crear series 
+            Series serie = gant.Series.Add(ProcesoListo.GSnombre);
+            serie.ChartType = SeriesChartType.Point;
+
+            for (int i = inicio ; i <= ProcesoListo.Tfinal ; i++)
+                serie.Points.AddXY(i, Yvalue);
+
+
+        }
+
 
         private void creatGrafico ( Proceso [] vectorProc )
         {
@@ -135,12 +170,88 @@ namespace FsFc
            // this.txtDurProc.Enabled = false;
         }
 
+        private void CargarArchivo ( string ruta)
+        {
+            StreamReader lr = new StreamReader(ruta);
+
+            int numProc = Convert.ToInt32(lr.ReadLine());
+            lr.Close();
+
+            Proceso[] VectorProc = new Proceso[numProc];
+            for (int i = 0; i < numProc; i++)
+                VectorProc[i] = new Proceso();
+            
+            Planificador.leerArchivo(VectorProc,ruta);
+
+            foreach( Proceso p in VectorProc)
+            {
+                ListViewItem it = new ListViewItem(p.GSnombre);
+                it.SubItems.Add(p.GSTiempoLLegada.ToString());
+                it.SubItems.Add(p.GSduracion.ToString());
+                listView2.Items.Add(it);
+                listView2.Refresh();
+
+            }
+
+            
+            
+                
+        }
+
+        private void DsplGantAlt()
+        {
+            this.txtAlt.Font = new Font(Font.FontFamily.Name,20, FontStyle.Bold);
+
+            StreamReader Lector = new StreamReader(@"C: \Users\frodo\Desktop\Planificacion\GantAlterno.txt");
+
+            // leer el archivo y meterlo en la caja de texto
+            string linea;
+            while ( (linea = Lector.ReadLine() ) != null)
+            {
+                this.txtAlt.Text += linea;
+                this.txtAlt.Text += @" 
+";
+                
+
+
+            }
+
+            
+        }
+
+        private void CargaAlterno(Planificador Pactual,Proceso Procesado, int numProc, int maximo, int Iesimo)
+        {
+            // generar grafica alterna obligada
+            this.GantAlterno.Checked = true;
+            Pactual.GantAlterno(Procesado, numProc, maximo, Iesimo);
+
+            // desplegar el gant en la caja de texto
+            for (int i = 0; i < numProc; i++)
+            {
+           
+                for (int j = 0; j < maximo; j++)
+                {
+                    // mostrar el gant en la caja de texto 
+                   
+                    this.txtAlt.Text += String.Format("{0}",Pactual.gant[i,j]);
+                    txtAlt.Refresh();
+                }
+                txtAlt.Text += @"
+                    ";
+         
+
+            }
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             string ruta = this.ruta;
             StreamReader lectr = new StreamReader(ruta);
             int numProc = Convert.ToInt16(lectr.ReadLine());
-          
+            lectr.Close();
+
+            StreamWriter Escritor = new StreamWriter(@"C: \Users\frodo\Desktop\Planificacion\GantAlterno.txt");
+
             // cola de usados 
             Queue usados = new Queue(numProc);
 
@@ -157,30 +268,52 @@ namespace FsFc
             Planificador plnfcdr1 = new Planificador();
 
             // leer archivos y meterlos en el vector
-            plnfcdr1.leerArchivo(vectProc,ruta);
+            Planificador.leerArchivo(vectProc,ruta);
             int llegada = vectProc[0].GSTiempoLLegada;
-            lectr.Close();
+            
+
+            int maximo = 0;
+
+            foreach (Proceso P in vectProc)
+                            maximo += P.GSduracion;
+
+            plnfcdr1.gant = new string[numProc, maximo+1];
+            plnfcdr1.InicarGant(numProc, maximo + 1);
 
             // decidir segund el algoritmo de planificacion
             switch (this.comboBox1.Text)
             {
 
                 case "SJF":
-                    int espera = 0;
+                    int espera = 1;
                     int Tinicio = 1;
                     int Tfinal = 1;
                     int yValue = 1;
                     int cont = 0;
+
                     while ( cont < numProc  )
                      {
                         Proceso Procesado = plnfcdr1.PlanificarSJF(colaProc, vectProc, Tinicio,Tfinal, espera);
+                        plnfcdr1.LLenarGant(Procesado, cont, maximo);
+                        
+
+                     
+                            if ( !this.GantAlterno.Checked )
+                                Graficar(Procesado, yValue, espera);
+                        
+
+
+                      
+
                         colaCop.Enqueue(Procesado);
                         if (Procesado != null)
                         {
-                            Graficar(Procesado, yValue, espera);
+                          
                             Tinicio += Procesado.GSTiempoLLegada;
                             Tfinal += Procesado.GSduracion;
                             espera += Procesado.GSduracion;
+
+                            this.display(Procesado);
 
                             yValue++;
                             cont++;
@@ -191,25 +324,61 @@ namespace FsFc
                 break;
 
                 case "FcFs":
-                    espera = 0;
+                  
                     yValue = 1;
-                    espera = 0;
+                    espera = 1;
                     foreach(Proceso p in vectProc)
                     {
                         colaProc.Enqueue(p);
                         Proceso Procesado = plnfcdr1.PlanificarFcFs(colaProc, espera);
+                        plnfcdr1.LLenarGant(Procesado, yValue -1, maximo);
+
                         colaCop.Enqueue(Procesado);
                         Graficar(Procesado, yValue, espera);
-                        espera += Procesado.GSduracion +1 ;
+                        espera += Procesado.GSduracion  ;
                         yValue++;
+                        this.display(Procesado);
                     }
 
+
+                    break;
+
+                case "SJFX":
+             
+                    ArrayList l = new ArrayList();
+                    foreach (Proceso p in vectProc)
+                        l.Add(p);
+                    int i = 0;
+                   Queue Procesados =  plnfcdr1.PlanificarSJFX(l);
+                    foreach (Proceso p in Procesados)
+                    {
+                        this.display(p);
+                        try
+                        {
+                            this.GraficarProceso(p, i + 1 , p.Tinicio);
+                            i++;
+                        }
+                        catch(Exception Ex)
+                        {
+                            i++;
+                        }
+                    }
+                       
+
+          
+                        
+                    colaCop = Procesados;
 
                     break;
             }
 
             // poner el tiempo promedio en la etiqeta
-            this.lblPromedio.Text = Convert.ToString( plnfcdr1.GetStdstcs(colaCop, numProc) );
+            plnfcdr1.ImprimirGantTxt(Escritor, numProc, maximo, vectProc);
+            Escritor.Close();
+            if (this.GantAlterno.Checked)
+                this.DsplGantAlt();
+            
+            this.lblPromedio.Text = Convert.ToString( (float)plnfcdr1.GetStdstcs(colaCop, numProc) );
 
 
 
@@ -241,7 +410,10 @@ namespace FsFc
         private void button4_Click(object sender, EventArgs e)
         {
             // limpiar elementos 
-            this.listView2.Clear();
+            lnomb.Text = " ";
+            this.lblPromedio.Text = " ";
+            this.listView2.Items.Clear();
+            this.ruta = " ";
             foreach (Control c in this.Controls)
             {
                 if (c is GroupBox)
@@ -277,6 +449,45 @@ namespace FsFc
         }
 
         private void button1_Click_1(object sender, EventArgs e)
+        {
+            OpenFileDialog op = new OpenFileDialog();
+
+            op.ShowDialog();
+            this.ruta = op.FileName;
+            try
+            {
+                if (!this.ruta.Equals(null))
+                {
+                    this.CargarArchivo(ruta);
+                    this.lnomb.Text = op.SafeFileName;
+
+                }
+            }
+            catch
+            {
+                MessageBox.Show("No se ha podido abrir el archivo!!!!");
+            }
+
+
+              
+                
+        }
+
+        private void GantAlterno_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.GantAlterno.Checked)
+            {
+                gant.Visible = false;
+                txtAlt.Visible = true;
+            }
+            else
+            {
+                gant.Visible = true;
+                txtAlt.Visible = false;
+            }
+        }
+
+        private void label1_Click(object sender, EventArgs e)
         {
 
         }
