@@ -46,18 +46,22 @@ namespace FsFc
             
             // agregar elementos a la lista
             
-            listView1.Columns.Add("1" ,"Nombre", listView1.Width / 7);
-            listView1.Columns.Add("2", "To", listView1.Width / 7);
-            listView1.Columns.Add("3", "Duracion", listView1.Width /7);            
-            listView1.Columns.Add("4","Ti", listView1.Width / 7);
-            listView1.Columns.Add("5", "Tf", listView1.Width / 7);
-            listView1.Columns.Add("6", "Tr", listView1.Width / 7);
-            listView1.Columns.Add("7", "Te", listView1.Width / 7);
+            listView1.Columns.Add("1" ,"Nombre", listView1.Width / 9);
+            listView1.Columns.Add("2", "To", listView1.Width / 9);
+            listView1.Columns.Add("3", "Duracion", listView1.Width /9);
+            listView1.Columns.Add("4", "Prioridad", listView2.Width /9);
+            listView1.Columns.Add("5", "Veges", listView2.Width / 9);
+            listView1.Columns.Add("6","Ti", listView1.Width / 9);
+            listView1.Columns.Add("7", "Tf", listView1.Width / 9);
+            listView1.Columns.Add("8", "Tr", listView1.Width / 9);
+            listView1.Columns.Add("9", "Te", listView1.Width / 9);
 
 
-            listView2.Columns.Add("0", "Nombre", listView2.Width / 3);
-            listView2.Columns.Add("0", "To", listView2.Width / 3);
-            listView2.Columns.Add("0", "Duracion", listView2.Width / 3);
+            listView2.Columns.Add("0", "Nombre", listView2.Width / 5);
+            listView2.Columns.Add("0", "Prioridad", listView2.Width / 5);
+            listView2.Columns.Add("0", "Veges", listView2.Width / 5);
+            listView2.Columns.Add("0", "To", listView2.Width / 5);
+            listView2.Columns.Add("0", "Duracion", listView2.Width / 5);
 
 
 
@@ -65,6 +69,11 @@ namespace FsFc
             comboBox1.Items.Add("FcFs");
             comboBox1.Items.Add("SJF");
             comboBox1.Items.Add("SJFX");
+            comboBox1.Items.Add("SRTF");
+            comboBox1.Items.Add("Priority");
+            comboBox1.Items.Add("PriorityX");
+            comboBox1.Items.Add("Round Robin");
+            
 
             gGant.Text = " ";
            // gin.Text = " ";
@@ -101,6 +110,10 @@ namespace FsFc
             ListViewItem it = new ListViewItem(Procesado.GSnombre);
             it.SubItems.Add(Procesado.GSTiempoLLegada.ToString());
             it.SubItems.Add(Procesado.GSduracion.ToString());
+
+            it.SubItems.Add(Procesado.Prioridad.ToString());
+            it.SubItems.Add(Procesado.Vejes.ToString());
+
             it.SubItems.Add(Procesado.Tinicio.ToString());
             it.SubItems.Add(Procesado.Tfinal.ToString());
             it.SubItems.Add(Procesado.Tretorno.ToString());
@@ -186,16 +199,14 @@ namespace FsFc
             foreach( Proceso p in VectorProc)
             {
                 ListViewItem it = new ListViewItem(p.GSnombre);
+                it.SubItems.Add(p.Prioridad.ToString());
+                it.SubItems.Add(p.Vejes.ToString());
                 it.SubItems.Add(p.GSTiempoLLegada.ToString());
                 it.SubItems.Add(p.GSduracion.ToString());
                 listView2.Items.Add(it);
                 listView2.Refresh();
 
-            }
-
-            
-            
-                
+            } 
         }
 
         private void DsplGantAlt()
@@ -209,7 +220,7 @@ namespace FsFc
             while ( (linea = Lector.ReadLine() ) != null)
             {
                 this.txtAlt.Text += linea;
-                this.txtAlt.Text += @" 
+                this.txtAlt.Text += @"
 ";
                 
 
@@ -364,11 +375,76 @@ namespace FsFc
                         }
                     }
                        
-
-          
-                        
                     colaCop = Procesados;
 
+                    break;
+
+                case "SRTF":
+                    // meter procesos a la lista
+                    ArrayList ListaProc = new ArrayList();
+                    foreach (Proceso P in vectProc )
+                        ListaProc.Add(P);
+
+                    i = 0;
+                    Queue ProcesadosSRTF = plnfcdr1.PlanificarSRFT(ListaProc);
+
+                    // dar salida grafica 
+                    foreach( Proceso P in ProcesadosSRTF )
+                    {
+                        this.display(P);
+                        try
+                        {
+                            this.GraficarProceso(P, i + 1, P.Tinicio);
+                        }
+                        finally
+                        {
+                            i++;
+                        }
+                    }
+                    colaCop = ProcesadosSRTF;
+                    break;
+
+                case "Round Robin":
+                    // meter procesos a la lista
+                    ArrayList ListaProcRR = new ArrayList();
+                    foreach (Proceso P in vectProc)
+                        ListaProcRR.Add(P);
+
+                    i = 0;
+
+                    // planificar RR
+                    Queue ProcesadosRR = plnfcdr1.PlanificarRR(ListaProcRR);
+
+                    // graficar procesos 
+                    foreach (Proceso P in ProcesadosRR)
+                    {
+                        this.display(P);
+                        try
+                        {
+                            this.GraficarProceso(P, i + 1, P.Tinicio);
+                        }
+                        finally
+                        {
+                            i++;
+                        }
+                    }
+                    colaCop = ProcesadosRR;
+                    break;
+
+                case "Priority":
+                    ArrayList lentrada = new ArrayList();
+                    foreach (Proceso p in vectProc)
+                        lentrada.Add(p);
+
+                    colaCop = plnfcdr1.PlanificarPrioridad(lentrada);
+                    i = 1;
+                    foreach (Proceso p in colaCop)
+                    {
+                        this.display(p);
+                        this.GraficarProceso(p, i, p.Tinicio);
+                        i++;
+
+                    }
                     break;
             }
 
@@ -378,18 +454,8 @@ namespace FsFc
             if (this.GantAlterno.Checked)
                 this.DsplGantAlt();
             
-            this.lblPromedio.Text = Convert.ToString( (float)plnfcdr1.GetStdstcs(colaCop, numProc) );
-
-
-
-
-
-
-       
-
-
-                
-            
+            this.lblPromedio.Text = string.Format("{0:C2}" , Convert.ToString( (float)plnfcdr1.GetStdstcs(colaCop, numProc) ));
+           
         }
 
         private void button3_Click(object sender, EventArgs e)

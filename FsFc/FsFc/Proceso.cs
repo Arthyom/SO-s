@@ -69,6 +69,8 @@ namespace FsFc
 
         public int faltate;
         public int tEspera;
+        public int Prioridad;
+        public int Vejes;
 
         public Proceso()
         {
@@ -76,6 +78,9 @@ namespace FsFc
             this.estado = 0;
             this.nombre = " ";
             this.duracion = 0;
+            this.Vejes = 0;
+            this.Prioridad = 0;
+            
 
             int d = this.duracion;
             this.faltate = d;
