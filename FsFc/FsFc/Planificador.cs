@@ -474,8 +474,37 @@ namespace FsFc
 
         public void PushGant(Proceso Procesado, int Iesimo, int Thrzntl)
         {
-            this.gant[Iesimo, Thrzntl] = "x";
-          
+            if ( Thrzntl + 1 >= Procesado.Tinicio  )
+                this.gant[Iesimo, Thrzntl] = "x";
+         
+            for( int i = 0; i < Procesado.GSTiempoLLegada; i ++ )
+                if (this.gant[Iesimo, i] != "x")
+                    this.gant[Iesimo, i] = ".";
+
+            for (int i = 0; i < Procesado.Tinicio; i++)
+                if (this.gant[Iesimo, i] != "x")
+                    this.gant[Iesimo, i] = "E";
+
+            for (int i = Thrzntl-1; i > 0; i--)
+            {
+                if (this.gant[Iesimo, i - 1] == "-")
+                    this.gant[Iesimo, i] = "E";
+
+            }
+
+            for (int i = 0; i < Thrzntl; i++)
+            {
+                if (this.gant[Iesimo, i + 1] == "-")
+                    this.gant[Iesimo, i+1] = "E";
+
+            }
+
+
+
+
+
+
+
         }
 
         public void ImprimirGantTxt(StreamWriter Escritor, int Columnas, int Filas, Proceso[] VectorProc)
@@ -517,7 +546,7 @@ namespace FsFc
         {
             for (int i = 0; i < MaximoH; i++)
                 for (int j = 0; j < MaximoV; j++)
-                    this.gant[i, j] = " ";
+                    this.gant[i, j] = "-";
         }
 
         public int ContarEs(int Iesimo, int Tiempo)
@@ -607,66 +636,70 @@ namespace FsFc
         public Queue PlanificarRR(ArrayList ListaEntrada)
         {
             this.Quantum = 4;
-            // crear colas de trabajo
             ArrayList ListaEstatica = ListaEntrada;
-            Queue ColaeEnTiempo = new Queue();
-            Queue ColaTerminados = new Queue();
-            int tiempo = 1;
+            ArrayList ListaEnTiempo = new ArrayList();
+            Queue ColaListos = new Queue();
             int borrados = 0;
+            int tiempo = 1;
 
-            // iterar hasta que termine la lista de entrada 
-            while( ListaEntrada.Count != borrados)
+            foreach (Proceso P in ListaEntrada)
+                if (P.GSTiempoLLegada == tiempo)
+                    ListaEnTiempo.Add(P);
+
+            while( ListaEntrada.Count > borrados )
             {
-                // conseguir procesos para el tiempo T
-                foreach (Proceso P in ListaEntrada)
-                    if (P.GSTiempoLLegada == tiempo)
-                        ColaeEnTiempo.Enqueue(P);
-                if( ColaeEnTiempo.Count > 0)
+                if(ListaEnTiempo.Count != 0)
                 {
-                    // tomar al primero de la cola 
-                    Proceso ProcesoEnTurno = (Proceso)ColaeEnTiempo.Peek();
-
-                    // ejecutar al proceso hasta que termine el quantum
-                    for (int i = 0; i < this.Quantum; i++)
+                    // itarear para cada uno de los procesos
+                    for (int i = 0; i <= ListaEnTiempo.Count; i++)
                     {
-                        if (ProcesoEnTurno.Tinicio == 0)
-                            ProcesoEnTurno.Tinicio = tiempo;
-                        this.PushGant(ProcesoEnTurno, this.ConvertIndx(ProcesoEnTurno, ListaEstatica), tiempo-1);
+                        Proceso ProcesoEnTurno;
 
-                        ProcesoEnTurno.faltate -= 1;
+                        // tomar al Iesimo proceso
+                        if (i == ListaEnTiempo.Count)
+                            ProcesoEnTurno = (Proceso)ListaEnTiempo[i - 1];
+                        else
+                            ProcesoEnTurno = (Proceso)ListaEnTiempo[i];
 
-      
-
-                        // verificar si ha terminado un proceso
-                        if (ProcesoEnTurno.faltate == 0)
+                        // porcesarlo por lo que dura el quantum
+                        for (int k = 0; k < Quantum; k++)
                         {
-                            ColaeEnTiempo.Dequeue();
-                            ColaTerminados.Enqueue(ProcesoEnTurno);
-                            borrados++;
-                            break;
+
+                            ProcesoEnTurno.faltate -= 1;
+                            if (ProcesoEnTurno.Tinicio == 0)
+                                ProcesoEnTurno.Tinicio = tiempo;
+                            this.PushGant(ProcesoEnTurno, this.ConvertIndx(ProcesoEnTurno, ListaEstatica), tiempo - 1);
+                            tiempo++;
+
+                            // ver si el proceso ha terminado
+                            if (ProcesoEnTurno.faltate == 0)
+                            {
+                                ProcesoEnTurno.Tfinal = tiempo - 1;
+                                ProcesoEnTurno.Tretorno = this.ContarTodo(this.ConvertIndx(ProcesoEnTurno, ListaEstatica), tiempo);
+                                ProcesoEnTurno.tEspera = this.ContarEs(this.ConvertIndx(ProcesoEnTurno, ListaEstatica), tiempo);
+                                ListaEnTiempo.Remove(ProcesoEnTurno);
+                                ColaListos.Enqueue(ProcesoEnTurno);
+                                //ListaEntrada.Remove(ProcesoEnTurno);
+                                borrados++;
+                                break;
+                            }
+
+                            foreach (Proceso P in ListaEntrada)
+                                if (P.GSTiempoLLegada == tiempo)
+                                    ListaEnTiempo.Add(P);
                         }
-
-                        tiempo++;
-
-                        // conseguir procesos para el tiempo T
-                        foreach (Proceso P in ListaEntrada)
-                            if (P.GSTiempoLLegada == tiempo)
-                                ColaeEnTiempo.Enqueue(P);
                     }
 
                 }
                 else
                 {
-                    // conseguir procesos para el tiempo T
+                    tiempo++;
                     foreach (Proceso P in ListaEntrada)
                         if (P.GSTiempoLLegada == tiempo)
-                            ColaeEnTiempo.Enqueue(P);
-                    tiempo++;
+                            ListaEnTiempo.Add(P);
                 }
-                    
             }
-            return ColaTerminados;
-
+            return ColaListos;
         }
 
         public int ContarXs ( int Iesimo, int tiempo)

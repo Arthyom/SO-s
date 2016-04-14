@@ -19,6 +19,8 @@ namespace FsFc
    
     public partial class Form1 : Form
     {
+        string RutaARchivos;
+
         public Form1()
         {
             InitializeComponent();
@@ -28,7 +30,7 @@ namespace FsFc
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+            this.Width -= txtEdit.Width ;
             gant.Titles.Add("Diagrama de Gant de Procesos");
             gant.ChartAreas["ChartArea1"].AxisY.Title = "Procesos";
             gant.ChartAreas["ChartArea1"].AxisX.Title = "Tiempo";
@@ -556,6 +558,191 @@ namespace FsFc
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void editorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EditVerBtn.Checked = false;
+            editOclt.Checked = true;
+            EditVerBtn.Enabled = true;
+            editOclt.Enabled = false;
+            int suma = this.Width - txtEdit.Width;
+
+            // ocultar el editor 
+            for (int i = 10 ; i < txtEdit.Width + 10; i+=10 )
+            {
+                this.Width -= 10;
+               
+                this.Refresh();
+            }
+        }
+
+        private void EditVerBtn_Click(object sender, EventArgs e)
+        {
+            EditVerBtn.Checked = true;
+            editOclt.Checked = false;
+            EditVerBtn.Enabled = false;
+            editOclt.Enabled = true;
+            int suma = this.Width + txtEdit.Width;
+
+            // ver el editor
+            for ( int i = 10;  i< txtEdit.Width+10; i +=10  )
+            {
+                this.Width += 10;
+                
+                this.Refresh();
+            }
+
+        }
+
+        private void nuevoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            EditVerBtn.Checked = true;
+            editOclt.Checked = false;
+            EditVerBtn.Enabled = false;
+            editOclt.Enabled = true;
+            int suma = this.Width + txtEdit.Width;
+
+            // ver el editor
+            for (int i = 10; i < txtEdit.Width + 10; i += 10)
+            {
+                this.Width += 10;
+
+                this.Refresh();
+            }
+
+
+        }
+
+        private void cerrarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            DialogResult r = MessageBox.Show("Desea Cerrar Sin Guardar???", "  ",MessageBoxButtons.OKCancel);
+            if ( r == DialogResult.OK) ;
+                this.CerrarEditor();
+        }
+
+        public void CerrarEditor()
+        {
+            EditVerBtn.Checked = false;
+            editOclt.Checked = true;
+            EditVerBtn.Enabled = true;
+            editOclt.Enabled = false;
+            int suma = this.Width - txtEdit.Width;
+
+            // ocultar el editor 
+            for (int i = 10; i < txtEdit.Width + 10; i += 10)
+            {
+                this.Width -= 10;
+
+                this.Refresh();
+            }
+
+            this.txtEdit.Clear();
+
+        }
+
+        public void AbrirEditor()
+        {
+            EditVerBtn.Checked = true;
+            editOclt.Checked = false;
+            EditVerBtn.Enabled = false;
+            editOclt.Enabled = true;
+            int suma = this.Width + txtEdit.Width;
+
+            // ver el editor
+            for (int i = 10; i < txtEdit.Width + 10; i += 10)
+            {
+                this.Width += 10;
+
+                this.Refresh();
+            }
+        }
+
+        private void editarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // abrir un archivo en el editor
+            OpenFileDialog explorador = new OpenFileDialog();
+            explorador.ShowDialog();
+
+            try
+            {
+                string ruta = explorador.FileName;
+                StreamReader Lector = new StreamReader(ruta);
+
+                // leer el acrchivo
+
+                int car;
+                while( (car = Lector.Read()) != -1 )
+                {
+                    this.txtEdit.Text += Convert.ToChar(car);
+
+                }
+                Lector.Close();
+                this.AbrirEditor();
+                this.lblArc.Text = explorador.SafeFileName;
+                this.RutaARchivos = ruta;
+
+            }
+            catch( Exception exp)
+            {
+                MessageBox.Show("No se pudo abrir el archivo");
+                return;
+            }
+
+            // leer el archivo
+           
+
+        }
+
+        private void guardarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            // guardar el archivo 
+            StreamWriter Escritor = new StreamWriter(this.RutaARchivos);
+
+            
+            foreach(char c in this.txtEdit.Text)
+            {
+                Escritor.Write(Convert.ToChar(c));         
+            }
+
+            Escritor.Close();
+            this.CerrarEditor();
+
+
+        }
+
+        private void guardarComoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Stream myStream;
+            SaveFileDialog saveFileDialog1 = new SaveFileDialog();
+
+            byte[] chars = new byte[this.txtEdit.Text.Length];
+            for (int i = 0; i < this.txtEdit.Text.Length; i++)
+                chars[i] = Convert.ToByte( this.txtEdit.Text[i] );
+
+            saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            saveFileDialog1.FilterIndex = 2;
+            saveFileDialog1.RestoreDirectory = true;
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                if ((myStream = saveFileDialog1.OpenFile()) != null)
+                {
+
+                        myStream.Write(chars, 0, this.txtEdit.Text.Length);
+
+                    // Code to write the stream goes here.
+                    myStream.Close();
+                    this.CerrarEditor();
+                }
+            }
+
+
+        }
+
+        private void borrarToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.txtEdit.Clear();
         }
     }
 }
