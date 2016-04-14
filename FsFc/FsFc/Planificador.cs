@@ -482,19 +482,19 @@ namespace FsFc
                     this.gant[Iesimo, i] = ".";
 
             for (int i = 0; i < Procesado.Tinicio; i++)
-                if (this.gant[Iesimo, i] != "x")
-                    this.gant[Iesimo, i] = "E";
+                if (this.gant[Iesimo, i] != "x" && this.gant[Iesimo, i ] != "." )
+                    this.gant[Iesimo, i] = "E"; 
 
             for (int i = Thrzntl-1; i > 0; i--)
             {
-                if (this.gant[Iesimo, i - 1] == "-")
+                if (this.gant[Iesimo, i - 1] == "-" && this.gant[Iesimo, i - 1] != ".")  
                     this.gant[Iesimo, i] = "E";
-
+                 
             }
 
             for (int i = 0; i < Thrzntl; i++)
             {
-                if (this.gant[Iesimo, i + 1] == "-")
+                if (this.gant[Iesimo, i + 1] == "-" && this.gant[Iesimo, i + 1] != ".") 
                     this.gant[Iesimo, i+1] = "E";
 
             }
