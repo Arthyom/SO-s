@@ -228,6 +228,7 @@ namespace FsFc
 
 
             }
+            Lector.Close();
 
             
         }
@@ -290,8 +291,8 @@ namespace FsFc
             foreach (Proceso P in vectProc)
                             maximo += P.GSduracion;
 
-            plnfcdr1.gant = new string[numProc, maximo+1];
-            plnfcdr1.InicarGant(numProc, maximo + 1);
+            plnfcdr1.gant = new string[numProc, maximo*2];
+            plnfcdr1.InicarGant(numProc, maximo*2);
 
             // decidir segund el algoritmo de planificacion
             switch (this.comboBox1.Text)
@@ -448,10 +449,27 @@ namespace FsFc
 
                     }
                     break;
+
+                case "PriorityX":
+                    ArrayList lentradaP = new ArrayList();
+                    foreach (Proceso p in vectProc)
+                        lentradaP.Add(p);
+
+                    colaCop = plnfcdr1.PlanificarPrioridadX(lentradaP);
+                    i = 1;
+                    foreach (Proceso p in colaCop)
+                    {
+                        this.display(p);
+                        this.GraficarProceso(p, i, p.Tinicio);
+                        i++;
+
+                    }
+                    break;
             }
 
             // poner el tiempo promedio en la etiqeta
-            plnfcdr1.ImprimirGantTxt(Escritor, numProc, maximo, vectProc);
+
+            plnfcdr1.ImprimirGantTxt(Escritor, numProc, maximo*2, vectProc);
             Escritor.Close();
             if (this.GantAlterno.Checked)
                 this.DsplGantAlt();
