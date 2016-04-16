@@ -75,6 +75,7 @@ namespace FsFc
             comboBox1.Items.Add("Priority");
             comboBox1.Items.Add("PriorityX");
             comboBox1.Items.Add("Round Robin");
+            comboBox1.Items.Add("HRRN");
             
 
             gGant.Text = " ";
@@ -464,6 +465,26 @@ namespace FsFc
                         i++;
 
                     }
+                    break;
+
+                case "HRRN":
+
+                    ArrayList ListaEntrada  = new ArrayList();
+                    ArrayList ListaEstatica = new ArrayList();
+                    foreach (Proceso p in vectProc)
+                    {
+                        ListaEntrada.Add(p);
+                        ListaEstatica.Add(p);
+                    }
+
+                    colaCop = plnfcdr1.PlanificarHRRN(ListaEntrada);
+
+                    foreach( Proceso p in colaCop)
+                    {
+                        this.display(p);
+                        this.GraficarProceso(p, 1+ plnfcdr1.ConvertIndx(p, ListaEstatica), p.Tinicio);
+                    }
+
                     break;
             }
 

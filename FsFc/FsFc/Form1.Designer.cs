@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea5 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
-            System.Windows.Forms.DataVisualization.Charting.Legend legend5 = new System.Windows.Forms.DataVisualization.Charting.Legend();
+            System.Windows.Forms.DataVisualization.Charting.ChartArea chartArea1 = new System.Windows.Forms.DataVisualization.Charting.ChartArea();
+            System.Windows.Forms.DataVisualization.Charting.Legend legend1 = new System.Windows.Forms.DataVisualization.Charting.Legend();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.button2 = new System.Windows.Forms.Button();
             this.gStdcs = new System.Windows.Forms.GroupBox();
@@ -51,14 +51,14 @@
             this.editarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cerrarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.guardarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.guardarComoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.verToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editOclt = new System.Windows.Forms.ToolStripMenuItem();
             this.EditVerBtn = new System.Windows.Forms.ToolStripMenuItem();
-            this.txtEdit = new System.Windows.Forms.TextBox();
-            this.lblArc = new System.Windows.Forms.Label();
-            this.guardarComoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.herramientasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.borrarToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.txtEdit = new System.Windows.Forms.TextBox();
+            this.lblArc = new System.Windows.Forms.Label();
             this.gStdcs.SuspendLayout();
             this.gGant.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.gant)).BeginInit();
@@ -224,12 +224,12 @@
             // 
             // gant
             // 
-            chartArea5.Name = "ChartArea1";
-            this.gant.ChartAreas.Add(chartArea5);
-            legend5.DockedToChartArea = "ChartArea1";
-            legend5.IsDockedInsideChartArea = false;
-            legend5.Name = "Legend1";
-            this.gant.Legends.Add(legend5);
+            chartArea1.Name = "ChartArea1";
+            this.gant.ChartAreas.Add(chartArea1);
+            legend1.DockedToChartArea = "ChartArea1";
+            legend1.IsDockedInsideChartArea = false;
+            legend1.Name = "Legend1";
+            this.gant.Legends.Add(legend1);
             this.gant.Location = new System.Drawing.Point(0, 8);
             this.gant.Name = "gant";
             this.gant.Size = new System.Drawing.Size(828, 296);
@@ -264,30 +264,37 @@
             // nuevoToolStripMenuItem
             // 
             this.nuevoToolStripMenuItem.Name = "nuevoToolStripMenuItem";
-            this.nuevoToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.nuevoToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.nuevoToolStripMenuItem.Text = "Nuevo";
             this.nuevoToolStripMenuItem.Click += new System.EventHandler(this.nuevoToolStripMenuItem_Click);
             // 
             // editarToolStripMenuItem
             // 
             this.editarToolStripMenuItem.Name = "editarToolStripMenuItem";
-            this.editarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.editarToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.editarToolStripMenuItem.Text = "Editar";
             this.editarToolStripMenuItem.Click += new System.EventHandler(this.editarToolStripMenuItem_Click);
             // 
             // cerrarToolStripMenuItem
             // 
             this.cerrarToolStripMenuItem.Name = "cerrarToolStripMenuItem";
-            this.cerrarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.cerrarToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.cerrarToolStripMenuItem.Text = "Cerrar";
             this.cerrarToolStripMenuItem.Click += new System.EventHandler(this.cerrarToolStripMenuItem_Click);
             // 
             // guardarToolStripMenuItem
             // 
             this.guardarToolStripMenuItem.Name = "guardarToolStripMenuItem";
-            this.guardarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.guardarToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
             this.guardarToolStripMenuItem.Text = "Guardar";
             this.guardarToolStripMenuItem.Click += new System.EventHandler(this.guardarToolStripMenuItem_Click);
+            // 
+            // guardarComoToolStripMenuItem
+            // 
+            this.guardarComoToolStripMenuItem.Name = "guardarComoToolStripMenuItem";
+            this.guardarComoToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
+            this.guardarComoToolStripMenuItem.Text = "Guardar Como...";
+            this.guardarComoToolStripMenuItem.Click += new System.EventHandler(this.guardarComoToolStripMenuItem_Click);
             // 
             // verToolStripMenuItem
             // 
@@ -301,16 +308,31 @@
             // editOclt
             // 
             this.editOclt.Name = "editOclt";
-            this.editOclt.Size = new System.Drawing.Size(152, 22);
+            this.editOclt.Size = new System.Drawing.Size(113, 22);
             this.editOclt.Text = "Ocultar";
             this.editOclt.Click += new System.EventHandler(this.editorToolStripMenuItem_Click);
             // 
             // EditVerBtn
             // 
             this.EditVerBtn.Name = "EditVerBtn";
-            this.EditVerBtn.Size = new System.Drawing.Size(152, 22);
+            this.EditVerBtn.Size = new System.Drawing.Size(113, 22);
             this.EditVerBtn.Text = "Ver";
             this.EditVerBtn.Click += new System.EventHandler(this.EditVerBtn_Click);
+            // 
+            // herramientasToolStripMenuItem
+            // 
+            this.herramientasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.borrarToolStripMenuItem});
+            this.herramientasToolStripMenuItem.Name = "herramientasToolStripMenuItem";
+            this.herramientasToolStripMenuItem.Size = new System.Drawing.Size(90, 20);
+            this.herramientasToolStripMenuItem.Text = "Herramientas";
+            // 
+            // borrarToolStripMenuItem
+            // 
+            this.borrarToolStripMenuItem.Name = "borrarToolStripMenuItem";
+            this.borrarToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
+            this.borrarToolStripMenuItem.Text = "Borrar";
+            this.borrarToolStripMenuItem.Click += new System.EventHandler(this.borrarToolStripMenuItem_Click);
             // 
             // txtEdit
             // 
@@ -333,28 +355,6 @@
             this.lblArc.Tag = "Nombre";
             this.lblArc.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // guardarComoToolStripMenuItem
-            // 
-            this.guardarComoToolStripMenuItem.Name = "guardarComoToolStripMenuItem";
-            this.guardarComoToolStripMenuItem.Size = new System.Drawing.Size(161, 22);
-            this.guardarComoToolStripMenuItem.Text = "Guardar Como...";
-            this.guardarComoToolStripMenuItem.Click += new System.EventHandler(this.guardarComoToolStripMenuItem_Click);
-            // 
-            // herramientasToolStripMenuItem
-            // 
-            this.herramientasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.borrarToolStripMenuItem});
-            this.herramientasToolStripMenuItem.Name = "herramientasToolStripMenuItem";
-            this.herramientasToolStripMenuItem.Size = new System.Drawing.Size(90, 20);
-            this.herramientasToolStripMenuItem.Text = "Herramientas";
-            // 
-            // borrarToolStripMenuItem
-            // 
-            this.borrarToolStripMenuItem.Name = "borrarToolStripMenuItem";
-            this.borrarToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.borrarToolStripMenuItem.Text = "Borrar";
-            this.borrarToolStripMenuItem.Click += new System.EventHandler(this.borrarToolStripMenuItem_Click);
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -365,6 +365,7 @@
             this.Controls.Add(this.gGant);
             this.Controls.Add(this.gStdcs);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Form1";

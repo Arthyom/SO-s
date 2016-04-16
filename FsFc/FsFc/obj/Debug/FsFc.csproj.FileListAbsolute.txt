@@ -1,0 +1,19 @@
+c:\users\frodo\documents\visual studio 2015\Projects\FsFc\FsFc\bin\Debug\FsFc.exe.config
+c:\users\frodo\documents\visual studio 2015\Projects\FsFc\FsFc\bin\Debug\FsFc.exe
+c:\users\frodo\documents\visual studio 2015\Projects\FsFc\FsFc\bin\Debug\FsFc.pdb
+c:\users\frodo\documents\visual studio 2015\Projects\FsFc\FsFc\obj\Debug\FsFc.csprojResolveAssemblyReference.cache
+c:\users\frodo\documents\visual studio 2015\Projects\FsFc\FsFc\obj\Debug\FsFc.Form1.resources
+c:\users\frodo\documents\visual studio 2015\Projects\FsFc\FsFc\obj\Debug\FsFc.Properties.Resources.resources
+c:\users\frodo\documents\visual studio 2015\Projects\FsFc\FsFc\obj\Debug\FsFc.csproj.GenerateResource.Cache
+c:\users\frodo\documents\visual studio 2015\Projects\FsFc\FsFc\obj\Debug\FsFc.exe
+c:\users\frodo\documents\visual studio 2015\Projects\FsFc\FsFc\obj\Debug\FsFc.pdb
+C:\Users\frodo\Documents\Proyectos\SO's\Planificacion\FsFc\FsFc\bin\Debug\FsFc.exe.config
+C:\Users\frodo\Documents\Proyectos\SO's\Planificacion\FsFc\FsFc\obj\Debug\FsFc.exe
+C:\Users\frodo\Documents\Proyectos\SO's\Planificacion\FsFc\FsFc\obj\Debug\FsFc.pdb
+C:\Users\frodo\Documents\Proyectos\SO's\Planificacion\FsFc\FsFc\obj\Debug\FsFc.csprojResolveAssemblyReference.cache
+C:\Users\frodo\Documents\Proyectos\SO's\Planificacion\FsFc\FsFc\obj\Debug\FsFc.Form1.resources
+C:\Users\frodo\Documents\Proyectos\SO's\Planificacion\FsFc\FsFc\obj\Debug\FsFc.Properties.Resources.resources
+C:\Users\frodo\Documents\Proyectos\SO's\Planificacion\FsFc\FsFc\obj\Debug\FsFc.csproj.GenerateResource.Cache
+C:\Users\frodo\Documents\Proyectos\SO's\Planificacion\FsFc\FsFc\bin\Debug\FsFc.exe
+C:\Users\frodo\Documents\Proyectos\SO's\Planificacion\FsFc\FsFc\bin\Debug\FsFc.pdb
+C:\Users\frodo\Documents\Proyectos\SO's\Planificacion\FsFc\FsFc\obj\Debug\FsFc.Form2.resources

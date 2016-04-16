@@ -53,6 +53,7 @@ namespace FsFc
         public int Tinicio;
         public int Tfinal;
         public int Tretorno;
+        public  float TazaRespuesta;
 
         private int duracion;
         public int GSduracion
@@ -87,6 +88,7 @@ namespace FsFc
             this.tiempoLLegada = 0;
             this.tEspera = 0;
             Tfinal = 0;
+            this.TazaRespuesta = 0;
             Tinicio = 0;
             Tretorno = 0;
         }

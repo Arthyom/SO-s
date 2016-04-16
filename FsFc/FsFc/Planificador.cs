@@ -474,15 +474,18 @@ namespace FsFc
 
         public void PushGant(Proceso Procesado, int Iesimo, int Thrzntl)
         {
-            if ( Thrzntl +1 >= Procesado.Tinicio  )
+            if ( Thrzntl == 0 )
                 this.gant[Iesimo, Thrzntl] = "x";
-         
-            for( int i = 0; i < Procesado.GSTiempoLLegada; i ++ )
+            else
+            {
+                if (  Thrzntl > 0 )
+                    this.gant[Iesimo, Thrzntl] = "x";
+            }
+            
+            for( int i = 0; i < Procesado.GSTiempoLLegada -1; i ++ )
                 if (this.gant[Iesimo, i] != "x")
                     this.gant[Iesimo, i] = ".";
-
-      
-
+          
             for (int i = 0; i < Procesado.Tinicio; i++)
                 if (this.gant[Iesimo, i] != "x" && this.gant[Iesimo, i ] != "." )
                     this.gant[Iesimo, i] = "E"; 
@@ -494,19 +497,12 @@ namespace FsFc
                  
             }
 
-            for (int i = 0; i < Thrzntl; i++)
+            for (int i = 0; i < Thrzntl-1; i++)
             {
                 if (this.gant[Iesimo, i + 1] == "-" && this.gant[Iesimo, i + 1] != "."  && this.gant[Iesimo, i + 1] != "x") 
                     this.gant[Iesimo, i+1] = "E";
 
             }
-
-
-
-
-
-
-
         }
 
         public void ImprimirGantTxt(StreamWriter Escritor, int Columnas, int Filas, Proceso[] VectorProc)
@@ -638,7 +634,7 @@ namespace FsFc
         // planificar con RR
         public Queue PlanificarRR(ArrayList ListaEntrada)
         {
-            this.Quantum = 4;
+            this.Quantum = 2;
 
             ArrayList ListaEstatica = new ArrayList();
             Queue ColaEnTiempo = new Queue();
@@ -654,7 +650,7 @@ namespace FsFc
             {
                 // meter procesos en la cola para el tiempo T
                 foreach (Proceso Proc in ListaEntrada)
-                    if (Proc.GSTiempoLLegada == tiempo && !ColaEnTiempo.Contains(Proc) && Proc.faltate > 0)   
+                    if (Proc.GSTiempoLLegada == tiempo && !ColaEnTiempo.Contains(Proc) )   
                         ColaEnTiempo.Enqueue(Proc);
 
                 // ejecitar un proceso si es que hay minimo 1
@@ -670,12 +666,12 @@ namespace FsFc
                         this.PushGant(ProcesoEnTurno, this.ConvertIndx(ProcesoEnTurno, ListaEstatica), tiempo - 1);
                         ProcesoEnTurno.faltate -= 1;
 
-                        if( ProcesoEnTurno.faltate <= 0 )
+                        if( ProcesoEnTurno.faltate == 0 )
                         {
                             // el proceso ha terminado 
                             ProcesoEnTurno.Tfinal = tiempo;
-                            ProcesoEnTurno.tEspera = this.ContarEs(this.ConvertIndx(ProcesoEnTurno, ListaEstatica), tiempo - 1);
-                            ProcesoEnTurno.Tretorno = this.ContarXs(this.ConvertIndx(ProcesoEnTurno, ListaEstatica), tiempo - 1);
+                            ProcesoEnTurno.tEspera = this.ContarEs(this.ConvertIndx(ProcesoEnTurno, ListaEstatica), tiempo );
+                            ProcesoEnTurno.Tretorno = this.ContarTodo(this.ConvertIndx(ProcesoEnTurno, ListaEstatica), tiempo );
                             ColaListos.Enqueue(ProcesoEnTurno);
                             ListaEntrada.Remove(ProcesoEnTurno);
 
@@ -797,7 +793,12 @@ namespace FsFc
             ArrayList ListaEnTiempo = new ArrayList();
             ArrayList ListaEstatica = ListaEntrada;
 
-            while( ListaEntrada.Count > borrados)
+            // meter proceso a la lista en el tiempo t
+            foreach (Proceso P in ListaEntrada)
+                if (P.GSTiempoLLegada == tiempo && !ListaEnTiempo.Contains(P))
+                    ListaEnTiempo.Add(P);
+
+            while ( ListaEntrada.Count > borrados)
             {
                 if (ListaEnTiempo.Count > 0)
                 {
@@ -806,7 +807,7 @@ namespace FsFc
                     {
                         // meter proceso a la lista en el tiempo t
                         foreach (Proceso P in ListaEntrada)
-                            if (P.GSTiempoLLegada == tiempo)
+                            if (P.GSTiempoLLegada == tiempo && ! ListaEnTiempo.Contains(P))
                                 ListaEnTiempo.Add(P);
 
                         // buscar al proceso mas importante 
@@ -823,8 +824,8 @@ namespace FsFc
                             tiempo++;
 
                             // meter proceso a la lista en el tiempo t
-                            foreach (Proceso P in ListaEntrada)
-                                if (P.GSTiempoLLegada == tiempo)
+                            foreach (Proceso P in ListaEntrada )
+                                if (P.GSTiempoLLegada == tiempo && !ListaEnTiempo.Contains(P) )
                                     ListaEnTiempo.Add(P);
                         }
 
@@ -846,7 +847,7 @@ namespace FsFc
                 {
                     // meter proceso a la lista en el tiempo t
                     foreach (Proceso P in ListaEntrada)
-                        if (P.GSTiempoLLegada == tiempo)
+                        if (P.GSTiempoLLegada == tiempo && !ListaEnTiempo.Contains(P))
                             ListaEnTiempo.Add(P);
                     tiempo++;
 
@@ -892,24 +893,29 @@ namespace FsFc
             ArrayList ListaEnTiempo = new ArrayList();
             ArrayList ListaEstatica = ListaEntrada;
 
-            while(ListaEntrada.Count > borrados )
+            // meter proceso a la lista en el tiempo t
+            foreach (Proceso P in ListaEntrada)
+                if (P.GSTiempoLLegada == tiempo && !ListaEnTiempo.Contains(P))               
+                    ListaEnTiempo.Add(P);
+
+            while (ListaEntrada.Count > borrados )
             {
                 if (ListaEnTiempo.Count > 0)
                 {
-                    // iterar hasta que termine la lista de entrada 
-                    while (ListaEntrada.Count != borrados)
+                    // iterar hasta que termine la lista en tiempo
+                    while (ListaEnTiempo.Count > 0)
                     {
                         // meter proceso a la lista en el tiempo t
-                        foreach (Proceso P in ListaEntrada)
+                        foreach (Proceso P in ListaEntrada  )
                         {
-                            if (P.GSTiempoLLegada == tiempo)
+                            if (P.GSTiempoLLegada == tiempo  && ! ListaEnTiempo.Contains(P))
                             {
                                 ListaEnTiempo.Add(P);
                                 // this.PushGant(P, this.ConvertIndx(P, ListaEstatica), tiempo - 1);
 
                             }
 
-
+                             
                         }
 
                         // buscar al proceso mas viejo
@@ -934,9 +940,9 @@ namespace FsFc
                             // poner es espera todos los otros procesos
                             foreach (Proceso P in ListaEnTiempo)
                             {
-                                if (P != MasImportante)
+                                if (P != MasImportante )
                                 {
-                                    // poner E's
+                                    // poner E's   
                                     if (P.faltate > 0)
                                         this.gant[this.ConvertIndx(P, ListaEstatica), tiempo] = "E";
                                 }
@@ -946,9 +952,9 @@ namespace FsFc
                             tiempo++;
 
                             // meter proceso a la lista en el tiempo t
-                            foreach (Proceso P in ListaEntrada)
+                            foreach (Proceso P in ListaEntrada  ) 
                             {
-                                if (P.GSTiempoLLegada == tiempo)
+                                if (P.GSTiempoLLegada == tiempo && !ListaEnTiempo.Contains(P))
                                 {
                                     ListaEnTiempo.Add(P);
                                     //this.PushGant(P, this.ConvertIndx(P, ListaEstatica), tiempo - 1);
@@ -979,22 +985,25 @@ namespace FsFc
                 }
                 else
                 {
-                    
+                   
 
-                    tiempo++;
 
                     // meter proceso a la lista en el tiempo t
                     foreach (Proceso P in ListaEntrada)
                     {
-                        if (P.GSTiempoLLegada == tiempo)
+                        if (P.GSTiempoLLegada == tiempo && !ListaEnTiempo.Contains(P))
                         {
                             ListaEnTiempo.Add(P);
                             //this.PushGant(P, this.ConvertIndx(P, ListaEstatica), tiempo - 1);
 
                         }
 
+                       
+
 
                     }
+
+                    tiempo++;
 
                 }
             }
@@ -1010,6 +1019,116 @@ namespace FsFc
 
             return EsTotal;
 
+        }
+
+        public void AgregarEnTiempo ( ArrayList ListaEntrada, int Tiempo, ArrayList ListaEnTiempo )
+        {
+            foreach (Proceso P in ListaEntrada)
+                if (P.GSTiempoLLegada == Tiempo && !ListaEnTiempo.Contains(P))
+                    ListaEnTiempo.Add(P);   
+        }
+
+        public void Procesar(  Proceso Procesado, int Tiempo , ArrayList ListaEstatica , ArrayList ListaEntiempo )
+        {
+            if (Procesado.Tinicio == 0)
+                Procesado.Tinicio = Tiempo+1;
+
+            this.PushGant(Procesado, this.ConvertIndx(Procesado,ListaEstatica), Tiempo);
+
+            // poner en esperar todos los procesos en la cola de tiempo 
+            foreach (Proceso p in ListaEntiempo)
+                if (string.Compare(Procesado.GSnombre, p.GSnombre) != 0 && this.gant[this.ConvertIndx(p, ListaEstatica), Tiempo] != "x")
+                    this.gant[this.ConvertIndx(p, ListaEstatica), Tiempo] = "|";
+
+            Procesado.faltate -= 1;
+        }
+
+        public void Finalizar ( Proceso Procesado, int Tiempo, ArrayList ListaEntrada, ArrayList ListaEntiempo, Queue ColaListos, ArrayList ListaEstatica )
+        {
+            Procesado.Tfinal = Tiempo;
+            Procesado.tEspera = this.ContarEs(this.ConvertIndx(Procesado, ListaEstatica), Tiempo);
+            Procesado.Tretorno = this.ContarTodo(this.ConvertIndx(Procesado, ListaEstatica), Tiempo);
+
+            ListaEntrada.Remove(Procesado);
+            ListaEntiempo.Remove(Procesado);
+            ColaListos.Enqueue(Procesado);
+        }
+
+        public void CalcularTaza ( int Tiempo  , ArrayList ListaEnTiempo, ArrayList ListaEstatica )
+        {
+            foreach( Proceso P in ListaEnTiempo )
+            {
+                int Tespera = this.ContarEs(this.ConvertIndx(P, ListaEstatica), Tiempo);
+                int TServicio = P.GSduracion;
+
+                P.TazaRespuesta = (float) (Tespera + TServicio) / TServicio;
+
+            }
+        }
+
+        public Proceso MayorTaza (ArrayList ListaEnTiempo)
+        {
+            // buscar al proceso con mayor raza de respues 
+            Proceso ProcesoMayor = (Proceso)ListaEnTiempo[0];
+            foreach (Proceso p in ListaEnTiempo)
+                if ( p.TazaRespuesta > ProcesoMayor.TazaRespuesta )
+                    ProcesoMayor = p;
+
+            return ProcesoMayor;
+        }
+
+        public ArrayList CopiarLista ( ArrayList ListaEntrada)
+        {
+            ArrayList ListaSalida = new ArrayList();
+
+            foreach (Proceso p in ListaEntrada)
+                ListaSalida.Add(p);
+            return ListaSalida;
+        }
+
+        public Queue PlanificarHRRN ( ArrayList ListaEntrada)
+        {
+            ArrayList ListaEstatica = this.CopiarLista(ListaEntrada);
+            ArrayList ListaEnTiempo = new ArrayList();
+            Queue ColaListos = new Queue();
+            int tiempo = 0;
+
+            // iniciar las variables
+            this.AgregarEnTiempo(ListaEntrada, tiempo, ListaEnTiempo);
+
+            // iterar hasta qe termine la lisgta de entrada 
+            while ( ListaEntrada.Count > 0)
+            {
+                // si hay algo que ejecutar
+                if ( ListaEnTiempo.Count > 0)
+                {
+                    /* decidir que proceso a ejecutar */
+                    this.CalcularTaza( tiempo -1, ListaEnTiempo, ListaEstatica );
+                    Proceso MayorTaza = this.MayorTaza( ListaEnTiempo );
+
+                    // ejecutar el proceso hasta que se acabe 
+                    while (MayorTaza.faltate > 0)
+                    {
+                        this.Procesar(MayorTaza, tiempo-1, ListaEstatica, ListaEnTiempo);
+                        tiempo++;
+                        // agregar a al lista en tiempo
+                        this.AgregarEnTiempo(ListaEntrada, tiempo, ListaEnTiempo);                      
+                    }
+                    // eliminar al proceso terminado 
+                    this.Finalizar(MayorTaza, tiempo-1, ListaEntrada, ListaEnTiempo, ColaListos, ListaEstatica);
+
+                    // agregar a al lista en tiempo
+                    this.AgregarEnTiempo(ListaEntrada, tiempo, ListaEnTiempo);
+                }
+                else
+                {
+                    tiempo++;
+                    // aumentar tiempo hasta que lleguen procesos 
+                    this.AgregarEnTiempo(ListaEntrada, tiempo, ListaEnTiempo);
+                }
+
+            }
+            return ColaListos;
         }
 
     }
